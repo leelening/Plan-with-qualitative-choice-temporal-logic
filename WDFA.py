@@ -1,4 +1,3 @@
-
 from automata.fa.dfa import DFA
 from pydot import Dot, Edge, Node
 import copy
@@ -12,9 +11,12 @@ the code can be further improved:
 - the computation of product does include unreachable states. should use a better implementation that only generates states reachable from the initial state.
 """
 
+
 class WDFA(DFA):
     # constructor
-    def __init__(self, states, input_symbols, transitions, initial_state, final_states, weight={}):
+    def __init__(
+        self, states, input_symbols, transitions, initial_state, final_states, weight={}
+    ):
         self.states = copy.deepcopy(states)
         self.initial_state = copy.deepcopy(initial_state)
         self.transitions = copy.deepcopy(transitions)
@@ -28,8 +30,8 @@ class WDFA(DFA):
         else:
             return None
 
-    def add_weight(self,q,a,nq, weight):
-        self.weight[(q,a,nq)] = weight
+    def add_weight(self, q, a, nq, weight):
+        self.weight[(q, a, nq)] = weight
 
     def trim(self):
         """
@@ -38,20 +40,22 @@ class WDFA(DFA):
         """
         states = list([self.initial_state])
         input_symbols = copy.deepcopy(self.input_symbols)
-        init  = copy.deepcopy(self.initial_state)
+        init = copy.deepcopy(self.initial_state)
         weight = dict([])
         transitions = dict([])
         count = 0
         while count < len(states):
             from_state = states[count]
-            count = count + 1 # move the pointer to the next state.
-            if from_state not in transitions: # first time visiting this state
+            count = count + 1  # move the pointer to the next state.
+            if from_state not in transitions:  # first time visiting this state
                 transitions[from_state] = dict([])
             # count is the number of reachable states.
             for a in self.transitions[from_state]:
                 next_state = self.transitions[from_state][a]
                 transitions[from_state][a] = next_state
-                weight[(from_state, a, next_state)] = self.weight[(from_state, a, next_state)]
+                weight[(from_state, a, next_state)] = self.weight[
+                    (from_state, a, next_state)
+                ]
                 if next_state in states:
                     pass
                 else:
@@ -61,28 +65,25 @@ class WDFA(DFA):
         self.states = states
         return
 
-
-
     def show_diagram(self, path=None):  # pragma: no cover
         """
-            Creates the graph associated with this DFA
+        Creates the graph associated with this DFA
         """
         # Nodes are set of states
 
-        graph = Dot(graph_type='digraph', rankdir='LR')
+        graph = Dot(graph_type="digraph", rankdir="LR")
         nodes = {}
         for state in self.states:
             if state == self.initial_state:
                 # color start state with green
                 if state in self.final_states:
                     initial_state_node = Node(
-                       str(state),
-                        style='filled',
-                        peripheries=2,
-                        fillcolor='#66cc33')
+                        str(state), style="filled", peripheries=2, fillcolor="#66cc33"
+                    )
                 else:
                     initial_state_node = Node(
-                        str(state), style='filled', fillcolor='#66cc33')
+                        str(state), style="filled", fillcolor="#66cc33"
+                    )
                 nodes[str(state)] = initial_state_node
                 graph.add_node(initial_state_node)
             else:
@@ -96,27 +97,30 @@ class WDFA(DFA):
         for from_state, lookup in self.transitions.items():
             # omit all self-loop at the sink state.
             for to_label, to_state in lookup.items():
-                if (from_state,to_label,to_state) in self.weight:
-                    weight = self.weight[(from_state,to_label,to_state)]
+                if (from_state, to_label, to_state) in self.weight:
+                    weight = self.weight[(from_state, to_label, to_state)]
                 else:
                     weight = 0
-                graph.add_edge(Edge(
-                    nodes[str(from_state)],
-                    nodes[str(to_state)],
-                    label=to_label + str(weight)
-                ))
+                graph.add_edge(
+                    Edge(
+                        nodes[str(from_state)],
+                        nodes[str(to_state)],
+                        label=to_label + str(weight),
+                    )
+                )
         if path:
             graph.write_png(path)
         return graph
 
     def get_option(self):
-        opt = 1 # by default, all formulas have at least one way to be satisfied.
-        for (q,a,nq) in self.weight:
-            if self.weight[(q,a,nq)] > opt:
-                opt = self.weight[(q,a,nq)]
+        opt = 1  # by default, all formulas have at least one way to be satisfied.
+        for (q, a, nq) in self.weight:
+            if self.weight[(q, a, nq)] > opt:
+                opt = self.weight[(q, a, nq)]
         return opt
 
-def sync_product(dfa1,dfa2):
+
+def sync_product(dfa1, dfa2):
     """
     Creates a new DFA which is the cross product of DFAs self and other
     with an empty set of final states. The state is a tuple: The difference from _cross_product
@@ -124,48 +128,52 @@ def sync_product(dfa1,dfa2):
     assert dfa1.input_symbols == dfa2.input_symbols
     states_a = list(dfa1.states)
     states_b = list(dfa2.states)
-    new_states = {
-        (a,b)
-        for a in states_a for b in states_b
-    }
+    new_states = {(a, b) for a in states_a for b in states_b}
     new_transitions = dict()
     for state_a, transitions_a in dfa1.transitions.items():
         for state_b, transitions_b in dfa2.transitions.items():
-            new_state =   (state_a, state_b)
+            new_state = (state_a, state_b)
             new_transitions[new_state] = dict()
             for symbol in dfa1.input_symbols:
                 new_transitions[new_state][symbol] = (
-                        (transitions_a[symbol], transitions_b[symbol]))
-    new_initial_state =  (dfa1.initial_state, dfa2.initial_state)
+                    transitions_a[symbol],
+                    transitions_b[symbol],
+                )
+    new_initial_state = (dfa1.initial_state, dfa2.initial_state)
     return DFA(
         states=new_states,
         input_symbols=dfa1.input_symbols,
         transitions=new_transitions,
         initial_state=new_initial_state,
-        final_states=set()
+        final_states=set(),
     )
-
 
 
 def get_wdfa_from_dfa(dfa):
     # from a given DFA, adding sink state and assign weights to new transitions.
     # Todo: Add code to ensure the DFA is complete.
 
-    wdfa = WDFA(dfa.states, dfa.input_symbols, dfa.transitions,dfa.initial_state,dfa.final_states)
-    wdfa.input_symbols.add('end')
-    wdfa.states.add('sink')
+    wdfa = WDFA(
+        dfa.states,
+        dfa.input_symbols,
+        dfa.transitions,
+        dfa.initial_state,
+        dfa.final_states,
+    )
+    wdfa.input_symbols.add("end")
+    wdfa.states.add("sink")
     for q in wdfa.final_states:
-        wdfa.transitions[q]['end'] = 'sink'
-        wdfa.add_weight(q,'end','sink', 1)
-    wdfa.transitions['sink'] = {}
+        wdfa.transitions[q]["end"] = "sink"
+        wdfa.add_weight(q, "end", "sink", 1)
+    wdfa.transitions["sink"] = {}
     for a in wdfa.input_symbols:
-        wdfa.transitions['sink'][a] = 'sink'
+        wdfa.transitions["sink"][a] = "sink"
     # now assign weights to transitions.
     for q in wdfa.states:
         for a in wdfa.input_symbols:
-            if a != 'end' and q != 'sink':
-                nq = wdfa.get_transition(q,a)
-                wdfa.add_weight(q,a,nq,0)
+            if a != "end" and q != "sink":
+                nq = wdfa.get_transition(q, a)
+                wdfa.add_weight(q, a, nq, 0)
     return wdfa
 
 
@@ -176,27 +184,32 @@ def orderedOR(dfa1, dfa2):
     :return: use automata product to construct the weighted automaton for ordered OR.
     """
     prod_dfa = sync_product(dfa1, dfa2)
-    prod_dfa.input_symbols.add('end') # include the ending of the string symbol.
-    prod_wdfa = WDFA(prod_dfa.states, prod_dfa.input_symbols, prod_dfa.transitions, prod_dfa.initial_state, prod_dfa.final_states)
-    prod_wdfa.states.add('sink') # adding the unique sink state.
-    prod_wdfa.transitions['sink']={} # adding dict for transitions from sink state.
+    prod_dfa.input_symbols.add("end")  # include the ending of the string symbol.
+    prod_wdfa = WDFA(
+        prod_dfa.states,
+        prod_dfa.input_symbols,
+        prod_dfa.transitions,
+        prod_dfa.initial_state,
+        prod_dfa.final_states,
+    )
+    prod_wdfa.states.add("sink")  # adding the unique sink state.
+    prod_wdfa.transitions["sink"] = {}  # adding dict for transitions from sink state.
     for a in prod_wdfa.input_symbols:
-        prod_wdfa.transitions['sink'][a] = 'sink'
+        prod_wdfa.transitions["sink"][a] = "sink"
     # define the weight function
     for q in prod_wdfa.states:
         for a in prod_wdfa.input_symbols:
             prod_wdfa.add_weight(q, a, prod_wdfa.get_transition(q, a), 0)
-        if q != 'sink':
-            (q1,q2) = q
+        if q != "sink":
+            (q1, q2) = q
             if q1 in dfa1.final_states:
-                prod_wdfa.transitions[q]['end']='sink'
-                prod_wdfa.add_weight(q, 'end', 'sink', 1)
+                prod_wdfa.transitions[q]["end"] = "sink"
+                prod_wdfa.add_weight(q, "end", "sink", 1)
             else:
                 if q2 in dfa2.final_states:
-                    prod_wdfa.transitions[q]['end'] = 'sink'
-                    prod_wdfa.add_weight(q, 'end', 'sink', 2)
+                    prod_wdfa.transitions[q]["end"] = "sink"
+                    prod_wdfa.add_weight(q, "end", "sink", 2)
     return prod_wdfa
-
 
 
 def generalized_orderedOR(wdfa, dfa):
@@ -207,21 +220,34 @@ def generalized_orderedOR(wdfa, dfa):
     :return:
     """
     # construct a DFA from the weighted DFA by removing the transitions labeled with 'end' and reaching sink state.
-    dfa_states = wdfa.states - set(['sink'])
-    dfa_input_symbols = wdfa.input_symbols - set(['end'])
+    dfa_states = wdfa.states - set(["sink"])
+    dfa_input_symbols = wdfa.input_symbols - set(["end"])
     dfa_transitions = {}
     for q in dfa_states:
-        dfa_transitions[q]= dict([])
+        dfa_transitions[q] = dict([])
         for a in dfa_input_symbols:
-            dfa_transitions[q][a]  = wdfa.transitions[q][a]
-    dfa1 = DFA(states= dfa_states, input_symbols= dfa_input_symbols, transitions= dfa_transitions, initial_state= wdfa.initial_state,final_states= set([]))
+            dfa_transitions[q][a] = wdfa.transitions[q][a]
+    dfa1 = DFA(
+        states=dfa_states,
+        input_symbols=dfa_input_symbols,
+        transitions=dfa_transitions,
+        initial_state=wdfa.initial_state,
+        final_states=set([]),
+    )
     temp = sync_product(dfa1, dfa)
-    prod_wdfa = WDFA(temp.states, temp.input_symbols, temp.transitions, temp.initial_state, temp.final_states,{})
-    prod_wdfa.states.add('sink')  # adding the unique sink state.
-    prod_wdfa.input_symbols.add('end')
-    prod_wdfa.transitions['sink'] = {}  # adding dict for transitions from sink state.
+    prod_wdfa = WDFA(
+        temp.states,
+        temp.input_symbols,
+        temp.transitions,
+        temp.initial_state,
+        temp.final_states,
+        {},
+    )
+    prod_wdfa.states.add("sink")  # adding the unique sink state.
+    prod_wdfa.input_symbols.add("end")
+    prod_wdfa.transitions["sink"] = {}  # adding dict for transitions from sink state.
     # to determine the maximal degree of satisfaction (dos) in the given wdfa
-    maxdos = 1 # by default, the dos can only be greater than one
+    maxdos = 1  # by default, the dos can only be greater than one
     for q in prod_wdfa.states:
         for a in prod_wdfa.transitions[q].keys():
             prod_wdfa.add_weight(q, a, prod_wdfa.get_transition(q, a), 0)
@@ -229,66 +255,73 @@ def generalized_orderedOR(wdfa, dfa):
         for a in wdfa.input_symbols:
             if a in wdfa.transitions[q1]:
                 nq1 = wdfa.transitions[q1][a]
-                if wdfa.weight[(q1,a,nq1)] > maxdos:
-                    maxdos = wdfa.weight[(q1,a,nq1)]
+                if wdfa.weight[(q1, a, nq1)] > maxdos:
+                    maxdos = wdfa.weight[(q1, a, nq1)]
     # include the new dfa as the least preferred outcome.
     for a in prod_wdfa.input_symbols:
-        prod_wdfa.transitions['sink'][a] = 'sink'
+        prod_wdfa.transitions["sink"][a] = "sink"
     for q in temp.states:
-            if q != 'sink':
-                q1, q2 = q
-                for a in prod_wdfa.input_symbols:
-                    if a in wdfa.transitions[q1]:
-                        nq1 = wdfa.transitions[q1][a]
-                        if nq1 == 'sink': # satisfying the wdfa to a degree of satisfaction.
-                            prod_wdfa.transitions[q]['end'] = 'sink'
-                            prod_wdfa.add_weight(q, 'end', 'sink', wdfa.weight[(q1,'end',nq1)])
-                    if a != 'end':
-                        nq2 = dfa.transitions[q2][a]
-                        if nq2 in dfa.final_states: # does not satisfy the original wdfa but satisfy the new least preferred outcome.
-                            prod_wdfa.transitions[q]['end'] = 'sink'
-                            prod_wdfa.add_weight(q, 'end', 'sink', maxdos+1)
+        if q != "sink":
+            q1, q2 = q
+            for a in prod_wdfa.input_symbols:
+                if a in wdfa.transitions[q1]:
+                    nq1 = wdfa.transitions[q1][a]
+                    if (
+                        nq1 == "sink"
+                    ):  # satisfying the wdfa to a degree of satisfaction.
+                        prod_wdfa.transitions[q]["end"] = "sink"
+                        prod_wdfa.add_weight(
+                            q, "end", "sink", wdfa.weight[(q1, "end", nq1)]
+                        )
+                if a != "end":
+                    nq2 = dfa.transitions[q2][a]
+                    if (
+                        nq2 in dfa.final_states
+                    ):  # does not satisfy the original wdfa but satisfy the new least preferred outcome.
+                        prod_wdfa.transitions[q]["end"] = "sink"
+                        prod_wdfa.add_weight(q, "end", "sink", maxdos + 1)
     return prod_wdfa
 
 
 def prioritized_conj(wdfa1, wdfa2):
     """
-    
+
     :param wdfa1: first formula
     :param wdfa2: second formula
     :return: wdfa for wdfa1 land wdfa2 where land is prioritized conjunction: wdfa1 is preferred to wdfa2.
     """
-    states = set(['sink'])
+    states = set(["sink"])
     transitions = dict([])
-    weight  = dict([])
-    opt2  = wdfa2.get_option()
+    weight = dict([])
+    opt2 = wdfa2.get_option()
     init = (wdfa1.initial_state, wdfa2.initial_state)
     for q1 in wdfa1.states:
         for q2 in wdfa2.states:
-            if q1 != 'sink' and q2 !='sink':
-                from_state = (q1,q2)
+            if q1 != "sink" and q2 != "sink":
+                from_state = (q1, q2)
                 states.add(from_state)
                 transitions[from_state] = dict([])
                 for a in wdfa1.input_symbols:
-                    if a != 'end':
+                    if a != "end":
                         nq1 = wdfa1.transitions[q1][a]
-                        nq2 =  wdfa2.transitions[q2][a]
-                        to_state = (nq1,nq2)
+                        nq2 = wdfa2.transitions[q2][a]
+                        to_state = (nq1, nq2)
                         states.add(to_state)
                         transitions[from_state][a] = to_state
                         weight[(from_state, a, to_state)] = 0
-                if 'end' in wdfa1.transitions[q1] and 'end' in wdfa2.transitions[q2]:
+                if "end" in wdfa1.transitions[q1] and "end" in wdfa2.transitions[q2]:
                     # both states are accepting to certain degree.
-                    transitions[from_state]['end'] = 'sink'
-                    sat1 = wdfa1.weight[(q1, 'end', 'sink')]
-                    sat2 = wdfa2.weight[(q2, 'end', 'sink')]
-                    weight[(from_state, 'end', 'sink')] = opt2*(sat1-1)+sat2
-    transitions['sink'] = dict([])
+                    transitions[from_state]["end"] = "sink"
+                    sat1 = wdfa1.weight[(q1, "end", "sink")]
+                    sat2 = wdfa2.weight[(q2, "end", "sink")]
+                    weight[(from_state, "end", "sink")] = opt2 * (sat1 - 1) + sat2
+    transitions["sink"] = dict([])
     for a in wdfa1.input_symbols:
-        transitions['sink'][a] = 'sink'
-        weight[('sink',a, 'sink')] = 0
+        transitions["sink"][a] = "sink"
+        weight[("sink", a, "sink")] = 0
     conj_wdfa = WDFA(states, wdfa1.input_symbols, transitions, init, set([]), weight)
     return conj_wdfa
+
 
 def prioritized_disj(wdfa1, wdfa2):
     """
@@ -296,43 +329,65 @@ def prioritized_disj(wdfa1, wdfa2):
     :param wdfa2:
     :return:
     """
-    states = set(['sink'])
+    states = set(["sink"])
     transitions = dict([])
-    weight  = dict([])
-    opt2  = wdfa2.get_option()
+    weight = dict([])
+    opt2 = wdfa2.get_option()
     init = (wdfa1.initial_state, wdfa2.initial_state)
     for q1 in wdfa1.states:
         for q2 in wdfa2.states:
-            if q1 != 'sink' and q2 !='sink':
-                from_state = (q1,q2)
+            if q1 != "sink" and q2 != "sink":
+                from_state = (q1, q2)
                 states.add(from_state)
                 transitions[from_state] = dict([])
                 for a in wdfa1.input_symbols:
-                    if a != 'end':
+                    if a != "end":
                         nq1 = wdfa1.transitions[q1][a]
-                        nq2 =  wdfa2.transitions[q2][a]
-                        to_state = (nq1,nq2)
+                        nq2 = wdfa2.transitions[q2][a]
+                        to_state = (nq1, nq2)
                         states.add(to_state)
                         transitions[from_state][a] = to_state
                         weight[(from_state, a, to_state)] = 0
-                if ('end' in wdfa1.transitions[q1] and wdfa1.weight[(q1,'end','sink')] == 1) or\
-                        ('end' in wdfa2.transitions[q2] and wdfa2.weight[(q2,'end','sink')] == 1):
+                if (
+                    "end" in wdfa1.transitions[q1]
+                    and wdfa1.weight[(q1, "end", "sink")] == 1
+                ) or (
+                    "end" in wdfa2.transitions[q2]
+                    and wdfa2.weight[(q2, "end", "sink")] == 1
+                ):
 
-                    transitions[from_state]['end'] = 'sink'
-                    weight[(from_state, 'end', 'sink')] = 1
-                if 'end' in wdfa1.transitions[q1] and wdfa1.weight[(q1,'end','sink')] > 1 and 'end' not in wdfa2.transitions[q2]:
-                    transitions[from_state]['end'] = 'sink'
-                    weight[(from_state, 'end', 'sink')] = opt2*(wdfa1.weight[(q1,'end','sink')]-1)+1
-                if (('end' in wdfa1.transitions[q1] and wdfa1.weight[(q1,'end','sink')] > 1) or 'end' not in wdfa1.transitions[q1]) \
-                        and ('end' in wdfa2.transitions[q2] and wdfa2.weight[(q2, 'end', 'sink')] > 1):
-                    transitions[from_state]['end'] = 'sink'
-                    weight[(from_state, 'end', 'sink')] = wdfa2.weight[(q2, 'end', 'sink')]
-    transitions['sink']=dict([])
+                    transitions[from_state]["end"] = "sink"
+                    weight[(from_state, "end", "sink")] = 1
+                if (
+                    "end" in wdfa1.transitions[q1]
+                    and wdfa1.weight[(q1, "end", "sink")] > 1
+                    and "end" not in wdfa2.transitions[q2]
+                ):
+                    transitions[from_state]["end"] = "sink"
+                    weight[(from_state, "end", "sink")] = (
+                        opt2 * (wdfa1.weight[(q1, "end", "sink")] - 1) + 1
+                    )
+                if (
+                    (
+                        "end" in wdfa1.transitions[q1]
+                        and wdfa1.weight[(q1, "end", "sink")] > 1
+                    )
+                    or "end" not in wdfa1.transitions[q1]
+                ) and (
+                    "end" in wdfa2.transitions[q2]
+                    and wdfa2.weight[(q2, "end", "sink")] > 1
+                ):
+                    transitions[from_state]["end"] = "sink"
+                    weight[(from_state, "end", "sink")] = wdfa2.weight[
+                        (q2, "end", "sink")
+                    ]
+    transitions["sink"] = dict([])
     for a in wdfa1.input_symbols:
-        transitions['sink'][a] = 'sink'
-        weight[('sink', a, 'sink')] = 0
+        transitions["sink"][a] = "sink"
+        weight[("sink", a, "sink")] = 0
     disj_wdfa = WDFA(states, wdfa1.input_symbols, transitions, init, set([]), weight)
     return disj_wdfa
 
-if __name__ == '__main__':
-    print('to add main')
+
+if __name__ == "__main__":
+    print("to add main")
