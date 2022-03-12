@@ -265,7 +265,8 @@ def ordered_or(dfa1, dfa2) -> WDFA:
     prod_wdfa.input_symbols.add("end")
     # add a unique sink state
     prod_wdfa.states.add("sink")
-    # define the weight function
+
+    # define the weight function and transition function
     for q, a in product(prod_wdfa.states, prod_wdfa.input_symbols):
         # add end symbol to the transitions
         if not prod_wdfa.get_transition(q, a):
@@ -290,6 +291,7 @@ def generalized_ordered_or(wdfa, dfa) -> WDFA:
     adding a new DFA, whose satisfaction is the least preferred.
     """
     assert isinstance(wdfa, WDFA)
+    assert len(wdfa.final_states) == 0
     assert isinstance(dfa, DFA)
 
     # construct a DFA from the weighted DFA by removing the transitions labeled with 'end' and reaching sink state.
@@ -298,7 +300,6 @@ def generalized_ordered_or(wdfa, dfa) -> WDFA:
     dfa_transitions = {
         q: {a: wdfa.transitions[q][a] for a in dfa_input_symbols} for q in dfa_states
     }
-    assert len(wdfa.final_states) == 0
     dfa1 = DFA(
         states=dfa_states,
         input_symbols=dfa_input_symbols,
@@ -316,17 +317,26 @@ def generalized_ordered_or(wdfa, dfa) -> WDFA:
         initial_state=prod_dfa.initial_state,
         final_states=prod_dfa.final_states,
     )
-    prod_wdfa.states.add("sink")  # adding the unique sink state.
+    assert len(prod_wdfa.final_states) == 0
+    # add end symbol to the input symbols set
     prod_wdfa.input_symbols.add("end")
+    # add a unique sink state
+    prod_wdfa.states.add("sink")
 
+    # define the weight function and transition function
     for q, a in product(prod_wdfa.states, prod_wdfa.input_symbols):
+        # add end symbol to the transitions
         if not prod_wdfa.get_transition(q, a):
             prod_wdfa.transitions[q][a] = q
             prod_wdfa.assign_weight(q, a, q, 0)
+        # old transitions
         if q != "sink":
             q1, q2 = q
+            # prioritize dfa1 over dfa2
             nq1 = wdfa.transitions[q1][a]
-            if nq1 == "sink":  # satisfying the wdfa to a degree of satisfaction.
+            # satisfying the wdfa to a degree of satisfaction. NOTE: we do not use final_states here
+            # due to generalization, that is, wdfa does not have final states.
+            if nq1 == "sink":
                 prod_wdfa.transitions[q]["end"] = "sink"
                 prod_wdfa.assign_weight(q, "end", "sink", wdfa.get_option())
             # does not satisfy the original wdfa but satisfy the new least preferred outcome.
@@ -342,6 +352,7 @@ def prioritized_conj(wdfa1, wdfa2) -> WDFA:
     prioritized conjunction: wdfa1 is preferred to wdfa2.
     """
     assert wdfa1.input_symbols == wdfa2.input_symbols
+    # a list of product states without, (sink, x) or (x, sink) or (sink, sink), where x can be any state in Q.
     states = [
         (q1, q2)
         for q1, q2 in product(wdfa1.states, wdfa2.states)
@@ -356,12 +367,7 @@ def prioritized_conj(wdfa1, wdfa2) -> WDFA:
     opt2 = wdfa2.get_option()
     initial_state = (wdfa1.initial_state, wdfa2.initial_state)
 
-    for (q1, q2) in states:
-        from_state = (q1, q2)
-        transitions[from_state]["end"] = from_state
-        weight[(from_state, "end", from_state)] = 0
-
-    # modify
+    # define the weight function and transition function.
     for (q1, q2) in states:
         from_state = (q1, q2)
         # handle the normal product transitions
@@ -373,6 +379,11 @@ def prioritized_conj(wdfa1, wdfa2) -> WDFA:
                     to_state = (nq1, nq2)
                     transitions[from_state][a] = to_state
                     weight[(from_state, a, to_state)] = 0
+
+        # initialize, these transition and weight can be modified later based on conditions,
+        # but we added there for completeness.
+        transitions[from_state]["end"] = from_state
+        weight[(from_state, "end", from_state)] = 0
         if (
             "end" in wdfa1.transitions[q1]
             and "sink" == wdfa1.transitions[q1]["end"]
@@ -392,7 +403,7 @@ def prioritized_conj(wdfa1, wdfa2) -> WDFA:
         input_symbols=wdfa1.input_symbols,
         transitions=transitions,
         initial_state=initial_state,
-        final_states=set([]),
+        final_states=set(),
         weight=weight,
     )
     conj_wdfa.validate()
@@ -404,6 +415,7 @@ def prioritized_disj(wdfa1, wdfa2):
     prioritized disjunction: wdfa1 is preferred over wdfa2
     """
     assert wdfa1.input_symbols == wdfa2.input_symbols
+    # a list of product states without, (sink, x) or (x, sink) or (sink, sink), where x can be any state in Q.
     states = [
         (q1, q2)
         for q1, q2 in product(wdfa1.states, wdfa2.states)
@@ -411,7 +423,9 @@ def prioritized_disj(wdfa1, wdfa2):
     ]
     transitions = defaultdict(dict)
     transitions["sink"] = {a: "sink" for a in wdfa1.input_symbols}
+
     weight = {("sink", a, "sink"): 0 for a in wdfa1.input_symbols}
+
     opt2 = wdfa2.get_option()
     initial_state = (wdfa1.initial_state, wdfa2.initial_state)
 
