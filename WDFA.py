@@ -10,7 +10,6 @@ __description__ = (
 )
 
 from automata.fa.dfa import DFA
-from docutils.parsers.rst import states
 from pydot import Dot, Edge, Node
 import copy
 from itertools import product
