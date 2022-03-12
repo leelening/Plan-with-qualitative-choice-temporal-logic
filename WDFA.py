@@ -62,6 +62,7 @@ class WDFA(DFA):
 
     def validate(self):
         """Validate all the weights are defined"""
+        # call the dfa validate function
         super(WDFA, self).validate()
         for q, a in product(self.states, self.input_symbols):
             nq = self.transitions[q][a]
