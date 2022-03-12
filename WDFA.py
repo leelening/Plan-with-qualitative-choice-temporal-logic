@@ -52,7 +52,7 @@ class WDFA(DFA):
 
     def get_transition(self, q, a):
         try:
-            self.transitions[q][a]
+            return self.transitions[q][a]
         except Exception:
             print(
                 "Error! Transition is not defined for state: {}, inputSymbol: {}".format(
@@ -79,11 +79,9 @@ class WDFA(DFA):
         self.weight[q, a, nq] = weight
 
     def trim(self):
-        """
-        remove unreachable states
-        :return:
-        """
-        states = [self.initial_state]  # visited states
+        """remove unreachable states"""
+        # visited states
+        states = [self.initial_state]
         weight = defaultdict()
         transitions = defaultdict(defaultdict)
         count = 0
@@ -107,7 +105,6 @@ class WDFA(DFA):
         self.transitions = transitions
         self.weight = weight
         self.states = set(states)
-        return
 
     def show_diagram(self, path=None):  # pragma: no cover
         """
@@ -159,7 +156,7 @@ class WDFA(DFA):
         opt = 1  # by default, all formulas have at least one way to be satisfied.
         for (q, a, nq) in self.weight:
             if self.weight[q, a, nq] > opt:
-                opt = self.weight[(q, a, nq)]
+                opt = self.weight[q, a, nq]
         return opt
 
 
@@ -199,26 +196,34 @@ def get_wdfa_from_dfa(dfa):
         dfa.initial_state,
         dfa.final_states,
     )
+    # add end symbol to the input symbols set
     wdfa.input_symbols.add("end")
-    wdfa.states.add("sink")  # and unique sink states
+    # and unique sink states
+    wdfa.states.add("sink")
+    # let sink state transits to itself.
     wdfa.transitions["sink"] = {a: "sink" for a in wdfa.input_symbols}
 
     # now assign weights to transition.
     for q, a in product(wdfa.states, wdfa.input_symbols):
+        # if input symbol is !end and q is not at the final state
         if a != "end" and q not in wdfa.final_states:
             nq = wdfa.get_transition(q, a)
             wdfa.add_weight(q, a, nq, 0)
+        # if input symbol is end and q is not at the final state. Note that q can be sink state
         elif a == "end" and q not in wdfa.final_states:
             nq = q
             wdfa.add_weight(q, a, nq, 0)
+        # if input symbol is !end and q is at the final state.
         elif a != "end" and q in wdfa.final_states:
             nq = q
             wdfa.add_weight(q, a, nq, 0)
+        # if input symbol is end and q is at the final state.
         elif a == "end" and q in wdfa.final_states:
             nq = "sink"
             wdfa.add_weight(q, a, "sink", 1)
         else:
             ValueError("Error: Unknown!")
+        # modify the transition
         wdfa.transitions[q][a] = nq
     wdfa.validate()
     return wdfa
