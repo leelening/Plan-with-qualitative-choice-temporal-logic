@@ -74,7 +74,7 @@ class ProductMDP(MDP):
             if "end" in self._wdfa.transitions[q] and "sink" == self._wdfa.transitions[q]["end"]:
                 # once the action stop is taken, then with probability one the agent reaches the sink state.
                 prob[i]["stop"][N] = 1
-                reward[(s, q), "stop"] = (
+                reward[i, "stop"] = (
                     options - self._wdfa.weight[q, "end", "sink"] + 1
                 )
         for a in actlist:
