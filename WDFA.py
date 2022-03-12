@@ -327,7 +327,7 @@ def prioritized_conj(wdfa1, wdfa2):
 
     transitions = defaultdict(defaultdict)
     transitions["sink"] = {a: "sink" for a in wdfa1.input_symbols}
-    
+
     weight = {("sink", a, "sink"): 0 for a in wdfa1.input_symbols}
 
     opt2 = wdfa2.get_option()
