@@ -8,6 +8,7 @@ import numpy as np
 import yaml
 from collections import defaultdict
 import pandas as pd
+from tabulate import tabulate
 
 
 class MDP(object):
@@ -74,7 +75,8 @@ class MDP(object):
             if not callable(getattr(self, attr)) and not attr.startswith("__"):
                 t["Description"].append(attr)
                 t["Value"].append(getattr(self, attr))
-        return pd.DataFrame(t).to_string()
+        df = pd.DataFrame(t)
+        return tabulate(df, showindex=False, headers=df.columns)
 
     def validate(self):
         for state in self.states:
