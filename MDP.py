@@ -1,4 +1,9 @@
-__author__ = "lli4@wpi.edu"
+__author__ = "Jie Fu and Lening Li"
+__email__ = "fujie@ufl.edu and lli4@wpi.edu"
+__version__ = "0.0.1"
+__maintainer__ = "Jie Fu and Lening Li"
+__description__ = "This code defines a class of Markov Decision Process."
+
 import numpy as np
 import yaml
 from collections import defaultdict
