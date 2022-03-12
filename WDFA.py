@@ -10,6 +10,7 @@ __description__ = (
 )
 
 from automata.fa.dfa import DFA
+from docutils.parsers.rst import states
 from pydot import Dot, Edge, Node
 import copy
 from itertools import product
@@ -58,8 +59,9 @@ class WDFA(DFA):
         # call the dfa validate function
         super(WDFA, self).validate()
         for q, a in product(self.states, self.input_symbols):
-            nq = self.transitions[q][a]
+            nq = self.get_transition(q, a)
             try:
+                assert nq is not None
                 assert (q, a, nq) in self.weight
             except Exception:
                 print(
@@ -315,39 +317,61 @@ def generalized_orderedOR(wdfa, dfa):
 
 def prioritized_conj(wdfa1, wdfa2):
     """
-    :param wdfa1: first formula
-    :param wdfa2: second formula
-    :return: wdfa for wdfa1 land wdfa2 where land is prioritized conjunction: wdfa1 is preferred to wdfa2.
+    prioritized conjunction: wdfa1 is preferred to wdfa2.
     """
-    # TODO: stop here.
-    states = {"sink"}
+    states = [
+        (q1, q2)
+        for q1, q2 in product(wdfa1.states, wdfa2.states)
+        if q1 != "sink" and q2 != "sink"
+    ]
+
     transitions = defaultdict(defaultdict)
-    weight = defaultdict()
+    transitions["sink"] = {a: "sink" for a in wdfa1.input_symbols}
+    
+    weight = {("sink", a, "sink"): 0 for a in wdfa1.input_symbols}
+
     opt2 = wdfa2.get_option()
-    init = (wdfa1.initial_state, wdfa2.initial_state)
-    for q1, q2 in product(wdfa1.states, wdfa2.states):
-        if q1 != "sink" and q2 != "sink":
-            from_state = (q1, q2)
-            states.add(from_state)
-            for a in wdfa1.input_symbols:
-                if a != "end":
-                    nq1 = wdfa1.transitions[q1][a]
-                    nq2 = wdfa2.transitions[q2][a]
+    initial_state = (wdfa1.initial_state, wdfa2.initial_state)
+
+    for (q1, q2) in states:
+        from_state = (q1, q2)
+        transitions[from_state]["end"] = from_state
+        weight[(from_state, "end", from_state)] = 0
+
+    # modify
+    for (q1, q2) in states:
+        from_state = (q1, q2)
+        # handle the normal product transitions
+        for a in wdfa1.input_symbols:
+            if a != "end":
+                nq1 = wdfa1.transitions[q1][a]
+                nq2 = wdfa2.transitions[q2][a]
+                if nq1 != "sink" and nq2 != "sink":
                     to_state = (nq1, nq2)
-                    states.add(to_state)
                     transitions[from_state][a] = to_state
                     weight[(from_state, a, to_state)] = 0
-            if "end" in wdfa1.transitions[q1] and "end" in wdfa2.transitions[q2]:
-                # both states are accepting to certain degree.
-                transitions[from_state]["end"] = "sink"
-                sat1 = wdfa1.weight[(q1, "end", "sink")]
-                sat2 = wdfa2.weight[(q2, "end", "sink")]
-                weight[(from_state, "end", "sink")] = opt2 * (sat1 - 1) + sat2
-    transitions["sink"] = defaultdict(defaultdict)
-    for a in wdfa1.input_symbols:
-        transitions["sink"][a] = "sink"
-        weight[("sink", a, "sink")] = 0
-    conj_wdfa = WDFA(states, wdfa1.input_symbols, transitions, init, set([]), weight)
+        if (
+            "end" in wdfa1.transitions[q1]
+            and "sink" == wdfa1.transitions[q1]["end"]
+            and "end" in wdfa2.transitions[q2]
+            and "sink" == wdfa2.transitions[q2]["end"]
+        ):
+            # both states are accepting to certain degree.
+            transitions[from_state]["end"] = "sink"
+            sat1 = wdfa1.weight[q1, "end", "sink"]
+            sat2 = wdfa2.weight[q2, "end", "sink"]
+            weight[(from_state, "end", "sink")] = opt2 * (sat1 - 1) + sat2
+
+    states.append("sink")
+
+    conj_wdfa = WDFA(
+        states=set(states),
+        input_symbols=wdfa1.input_symbols,
+        transitions=transitions,
+        initial_state=initial_state,
+        final_states=set([]),
+        weight=weight,
+    )
     conj_wdfa.validate()
     return conj_wdfa
 
