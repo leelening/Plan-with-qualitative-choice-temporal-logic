@@ -51,15 +51,15 @@ dfa3 = DFA(
 dfa3.validate()
 
 # try ordered OR between dfa1 and dfa2
-orderedDFA12 = orderedOR(dfa1, dfa2)
+orderedDFA12 = ordered_or(dfa1, dfa2)
 orderedDFA12.show_diagram(path="./orderedDFA12.png")
 
 # try ordered OR between dfa3 and dfa2
-orderedDFA = orderedOR(dfa3, dfa2)
+orderedDFA = ordered_or(dfa3, dfa2)
 orderedDFA.show_diagram(path="./orderedDFA.png")
 
 # try generalized ordered OR between
-orderedDFA2 = generalized_orderedOR(orderedDFA, dfa1)
+orderedDFA2 = generalized_ordered_or(orderedDFA, dfa1)
 orderedDFA2.show_diagram(path="./orderedDFA2.png")
 
 # create 3 wdfa
