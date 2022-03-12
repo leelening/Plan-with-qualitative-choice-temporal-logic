@@ -378,9 +378,7 @@ def prioritized_conj(wdfa1, wdfa2):
 
 def prioritized_disj(wdfa1, wdfa2):
     """
-    :param wdfa1:
-    :param wdfa2:
-    :return:
+    prioritized disjunction: wdfa1 is preferred over wdfa2
     """
     states = [
         (q1, q2)
