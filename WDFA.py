@@ -263,47 +263,37 @@ def orderedOR(dfa1, dfa2):
 
 def generalized_orderedOR(wdfa, dfa):
     """
-     adding a new DFA, whose satisfaction is the least preferred. The implementation is functional but not ideal. NEED REVISION.
-    :param wdfa:
-    :param dfa:
-    :return:
+    adding a new DFA, whose satisfaction is the least preferred.
     """
-    # TODO: finish working there
     assert isinstance(wdfa, WDFA)
     assert isinstance(dfa, DFA)
+
     # construct a DFA from the weighted DFA by removing the transitions labeled with 'end' and reaching sink state.
     dfa_states = wdfa.states - {"sink"}
     dfa_input_symbols = wdfa.input_symbols - {"end"}
     dfa_transitions = {
         q: {a: wdfa.transitions[q][a] for a in dfa_input_symbols} for q in dfa_states
     }
+    assert len(wdfa.final_states) == 0
     dfa1 = DFA(
         states=dfa_states,
         input_symbols=dfa_input_symbols,
         transitions=dfa_transitions,
         initial_state=wdfa.initial_state,
-        final_states=set(),
+        final_states=wdfa.final_states,
     )
-    temp = sync_product(dfa1, dfa)
+    # validate explicitly
+    dfa1.validate()
+    prod_dfa = sync_product(dfa1, dfa)
     prod_wdfa = WDFA(
-        states=temp.states,
-        input_symbols=temp.input_symbols,
-        transitions=temp.transitions,
-        initial_state=temp.initial_state,
-        final_states=temp.final_states,
-        weight={},
+        states=prod_dfa.states,
+        input_symbols=prod_dfa.input_symbols,
+        transitions=prod_dfa.transitions,
+        initial_state=prod_dfa.initial_state,
+        final_states=prod_dfa.final_states,
     )
     prod_wdfa.states.add("sink")  # adding the unique sink state.
     prod_wdfa.input_symbols.add("end")
-    prod_wdfa.transitions["sink"] = {}  # adding dict for transitions from sink state.
-    # to determine the maximal degree of satisfaction (dos) in the given wdfa
-    maxdos = 1  # by default, the dos can only be greater than one
-    # find the largest dos
-    for q1 in wdfa.states:
-        for a in wdfa.transitions[q1]:
-            nq1 = wdfa.transitions[q1][a]
-            if wdfa.weight[(q1, a, nq1)] > maxdos:
-                maxdos = wdfa.weight[(q1, a, nq1)]
 
     for q, a in product(prod_wdfa.states, prod_wdfa.input_symbols):
         if not prod_wdfa.get_transition(q, a):
@@ -314,14 +304,11 @@ def generalized_orderedOR(wdfa, dfa):
             nq1 = wdfa.transitions[q1][a]
             if nq1 == "sink":  # satisfying the wdfa to a degree of satisfaction.
                 prod_wdfa.transitions[q]["end"] = "sink"
-                prod_wdfa.add_weight(q, "end", "sink", wdfa.weight[(q1, "end", nq1)])
-            if a != "end":
-                nq2 = dfa.transitions[q2][a]
-                if (
-                    nq2 in dfa.final_states
-                ):  # does not satisfy the original wdfa but satisfy the new least preferred outcome.
-                    prod_wdfa.transitions[q]["end"] = "sink"
-                    prod_wdfa.add_weight(q, "end", "sink", maxdos + 1)
+                prod_wdfa.add_weight(q, "end", "sink", wdfa.get_option())
+            # does not satisfy the original wdfa but satisfy the new least preferred outcome.
+            elif q2 in dfa.final_states:
+                prod_wdfa.transitions[q]["end"] = "sink"
+                prod_wdfa.add_weight(q, "end", "sink", wdfa.get_option() + 1)
     prod_wdfa.validate()
     return prod_wdfa
 
