@@ -51,14 +51,7 @@ class WDFA(DFA):
         )
 
     def get_transition(self, q, a):
-        try:
-            return self.transitions[q][a]
-        except Exception:
-            print(
-                "Error! Transition is not defined for state: {}, inputSymbol: {}".format(
-                    q, a
-                )
-            )
+        return self.transitions[q][a] if a in self.transitions[q] else None
 
     def validate(self):
         """Validate all the weights are defined"""
@@ -74,6 +67,7 @@ class WDFA(DFA):
                         q, a, nq
                     )
                 )
+                exit(-1)
 
     def add_weight(self, q, a, nq, weight):
         self.weight[q, a, nq] = weight
@@ -198,7 +192,7 @@ def get_wdfa_from_dfa(dfa):
     )
     # add end symbol to the input symbols set
     wdfa.input_symbols.add("end")
-    # and unique sink states
+    # add an unique sink state
     wdfa.states.add("sink")
     # let sink state transits to itself.
     wdfa.transitions["sink"] = {a: "sink" for a in wdfa.input_symbols}
@@ -231,6 +225,7 @@ def get_wdfa_from_dfa(dfa):
 
 def orderedOR(dfa1, dfa2):
     """
+    ordered OR Operator
     :param dfa1: top priority given by dfa1
     :param dfa2: secondary outcome given by dfa2
     :return: use automata product to construct the weighted automaton for ordered OR.
@@ -242,17 +237,20 @@ def orderedOR(dfa1, dfa2):
         transitions=prod_dfa.transitions,
         initial_state=prod_dfa.initial_state,
         final_states=prod_dfa.final_states,
-        weight={},
     )
-    prod_wdfa.input_symbols.add("end")  # include the ending of the string symbol.
-    prod_wdfa.states.add("sink")  # adding the unique sink state.
+    # add end symbol to the input symbols set
+    prod_wdfa.input_symbols.add("end")
+    # add an unique sink state
+    prod_wdfa.states.add("sink")
     # define the weight function
     for q, a in product(prod_wdfa.states, prod_wdfa.input_symbols):
+        # add end symbol to the transitions
         if not prod_wdfa.get_transition(q, a):
             prod_wdfa.transitions[q][a] = q
             prod_wdfa.add_weight(q, a, q, 0)
         if q != "sink":
             (q1, q2) = q
+            # prioritize dfa1 over dfa2
             if q1 in dfa1.final_states:
                 prod_wdfa.transitions[q]["end"] = "sink"
                 prod_wdfa.add_weight(q, "end", "sink", 1)
