@@ -2,23 +2,24 @@ __author__ = "lli4@wpi.edu"
 import numpy as np
 import yaml
 from collections import defaultdict
-from prettytable import PrettyTable
+import pandas as pd
 
 
 class MDP(object):
     """
     A Markov Decision Process defined by
      1. an initial state,
-     2. transition model --- the probability transition dictionary prob[s][a][s'], which is the probability of going from s to s' with action a,
+     2. transition model --- the probability transition matrix implemented as a dictionary: prob[s][a][s'] is the probability of going from s to s' with action a,
      3. reward function.
      4. gamma value, for use by algorithms
-     5. AP: a set of atomic propositions, implemented as a list: Each proposition is identified by an index between 0-N.
-     6. L: the labeling function, implemented as a dictionary: state: a subset of AP.
+     5. AP: a set of atomic propositions implemented as a list: Each proposition is identified by an index between 0-N.
+     6. L: the labeling function implemented as a dictionary: L[s]: a subset of AP.
      7. sink: a list of terminal states
     We keep track of the possible actions for state s: prob[s].keys() and possible next states with action a: prob[s][a].keys()
     """
 
     def __init__(self, **kwargs):
+        """If file path is not empty, initialize from the file"""
         if "file_path" in kwargs:
             # Read YAML file
             with open(kwargs["file_path"], "r") as stream:
@@ -28,7 +29,7 @@ class MDP(object):
             for key in data_loaded:
                 if key != "P":
                     setattr(self, key, data_loaded[key])
-
+            # process specifically for the transition probabilities
             self.prob = defaultdict(lambda: defaultdict(dict))
             for x in data_loaded["P"]:
                 s, a, ns, p = x
@@ -36,6 +37,8 @@ class MDP(object):
             # call to validate the transition probabilities
             self.validate()
             return
+
+        """ Empty initialization """
         self.init = kwargs.pop("init", None)
         self.actlist = kwargs.pop("actlist", [])
         self.states = kwargs.pop("states", [])
@@ -61,11 +64,12 @@ class MDP(object):
 
     def __str__(self):
         """Print the information about the defined Markov Decision Process."""
-        t = PrettyTable(["Variable", "Value"])
+        t = {"Description": [], "Value": []}
         for attr in dir(self):
             if not callable(getattr(self, attr)) and not attr.startswith("__"):
-                t.add_row([attr, getattr(self, attr)])
-        return t.get_string()
+                t["Description"].append(attr)
+                t["Value"].append(getattr(self, attr))
+        return pd.DataFrame(t).to_string()
 
     def validate(self):
         for state in self.states:
