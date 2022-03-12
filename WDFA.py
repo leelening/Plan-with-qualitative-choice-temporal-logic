@@ -17,6 +17,7 @@ from pydot import Dot, Edge, Node
 import copy
 from itertools import product
 from collections import defaultdict
+from typing import Optional
 
 
 class WDFA(DFA):
@@ -40,7 +41,7 @@ class WDFA(DFA):
         initial_state,
         final_states,
         weight=None,
-    ):
+    ) -> None:
         # if the weight is None, we initialize transitions with all 0s.
         if weight is None:
             self.weight = {
@@ -57,13 +58,13 @@ class WDFA(DFA):
             final_states=final_states,
         )
 
-    def get_transition(self, q, a):
+    def get_transition(self, q, a) -> Optional[int]:
         return self.transitions[q][a] if a in self.transitions[q] else None
 
-    def assign_weight(self, q, a, nq, weight):
+    def assign_weight(self, q, a, nq, weight) -> None:
         self.weight[q, a, nq] = weight
 
-    def validate(self):
+    def validate(self) -> None:
         """Validate all the weights are defined"""
         # call the dfa validate function
         super(WDFA, self).validate()
@@ -88,7 +89,7 @@ class WDFA(DFA):
                 )
                 exit(-1)
 
-    def trim(self):
+    def trim(self) -> None:
         """remove unreachable states"""
         # some initializations
         states = [self.initial_state]
@@ -164,7 +165,7 @@ class WDFA(DFA):
             graph.write_png(path)
         return graph
 
-    def get_option(self):
+    def get_option(self) -> int:
         # by default, all formulas have at least one way to be satisfied.
         opt = 1
         for (q, a, nq) in self.weight:
@@ -173,7 +174,7 @@ class WDFA(DFA):
         return opt
 
 
-def sync_product(dfa1, dfa2):
+def sync_product(dfa1, dfa2) -> DFA:
     """
     Creates a new DFA which is the cross product of DFAs self and other
     with an empty set of final states. The state is a tuple: The difference from _cross_product
@@ -198,7 +199,7 @@ def sync_product(dfa1, dfa2):
     )
 
 
-def get_wdfa_from_dfa(dfa):
+def get_wdfa_from_dfa(dfa) -> WDFA:
     """Creates a WDFA given a DFA"""
     # from a given DFA, adding sink state and assign weights to new transitions.
     wdfa = WDFA(
@@ -210,13 +211,14 @@ def get_wdfa_from_dfa(dfa):
     )
     # add end symbol to the input symbols set
     wdfa.input_symbols.add("end")
-    # add an unique sink state
+    # add a unique sink state
     wdfa.states.add("sink")
     # let sink state transits to itself.
     wdfa.transitions["sink"] = {a: "sink" for a in wdfa.input_symbols}
 
     # now assign weights to transition.
     for q, a in product(wdfa.states, wdfa.input_symbols):
+        nq = None
         # if input symbol is !end and q is not at the final state
         if a != "end" and q not in wdfa.final_states:
             nq = wdfa.get_transition(q, a)
@@ -236,16 +238,17 @@ def get_wdfa_from_dfa(dfa):
         else:
             ValueError("Error: Unknown!")
         # modify the transition
+        assert nq is not None
         wdfa.transitions[q][a] = nq
     wdfa.validate()
     return wdfa
 
 
-def orderedOR(dfa1, dfa2):
+def ordered_or(dfa1, dfa2) -> WDFA:
     """
     ordered OR Operator
-    :param dfa1: top priority given by dfa1
-    :param dfa2: secondary outcome given by dfa2
+    :param automata.fa.dfa.DFA dfa1: top priority given by dfa1
+    :param automata.fa.dfa.DFA dfa2: secondary outcome given by dfa2
     :return: use automata product to construct the weighted automaton for ordered OR.
     """
     prod_dfa = sync_product(dfa1, dfa2)
@@ -256,9 +259,11 @@ def orderedOR(dfa1, dfa2):
         initial_state=prod_dfa.initial_state,
         final_states=prod_dfa.final_states,
     )
+    # we do not assign any final states in the WDFA
+    assert len(prod_wdfa.final_states) == 0
     # add end symbol to the input symbols set
     prod_wdfa.input_symbols.add("end")
-    # add an unique sink state
+    # add a unique sink state
     prod_wdfa.states.add("sink")
     # define the weight function
     for q, a in product(prod_wdfa.states, prod_wdfa.input_symbols):
@@ -266,6 +271,7 @@ def orderedOR(dfa1, dfa2):
         if not prod_wdfa.get_transition(q, a):
             prod_wdfa.transitions[q][a] = q
             prod_wdfa.assign_weight(q, a, q, 0)
+        # old transitions
         if q != "sink":
             (q1, q2) = q
             # prioritize dfa1 over dfa2
@@ -279,7 +285,7 @@ def orderedOR(dfa1, dfa2):
     return prod_wdfa
 
 
-def generalized_orderedOR(wdfa, dfa):
+def generalized_ordered_or(wdfa, dfa) -> WDFA:
     """
     adding a new DFA, whose satisfaction is the least preferred.
     """
@@ -331,7 +337,7 @@ def generalized_orderedOR(wdfa, dfa):
     return prod_wdfa
 
 
-def prioritized_conj(wdfa1, wdfa2):
+def prioritized_conj(wdfa1, wdfa2) -> WDFA:
     """
     prioritized conjunction: wdfa1 is preferred to wdfa2.
     """
