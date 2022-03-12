@@ -1,13 +1,16 @@
-__author__ = "Jie Fu and Lening Li"
-__email__ = "fujie@ufl.edu and lli4@wpi.edu"
+__authors__ = ["Jie Fu", "Lening Li"]
+__emails__ = ["fujie@ufl.edu", "lli4@wpi.edu"]
+__copyright__ = "Copyright 2022, The Qualitative Logic + Temporal Logic Project"
+__date__ = "2022-03-12"
+__license__ = "GPL"
 __version__ = "0.0.1"
-__maintainer__ = "Jie Fu and Lening Li"
 __description__ = (
     "the code can be further improved:"
     "- the computation of the generalized ordered OR."
     "- the computation of product does include unreachable states. should use a better "
     "implementation that only generates states reachable from the initial state."
 )
+__status__ = "Production"
 
 from automata.fa.dfa import DFA
 from pydot import Dot, Edge, Node
@@ -21,10 +24,12 @@ class WDFA(DFA):
     A weighted deterministic finite-state automaton defined by
      1. a set of states,
      2. a set of input_symbols, that is, a set of atomic propositions
-     3. transition model --- the deterministic transition function implemented as a dictionary: transitions[q][a] defines the next state going from state q with input a.
+     3. transition model --- the deterministic transition function implemented as a dictionary: transitions[q][a]
+        defines the next state going from state q with input a.
      4. an initial state,
      5. a set final states
-     6. weight function, implemented as a dictionary: weight[q, a, nq] defines the weight going from state q to state nq with input a.
+     6. weight function, implemented as a dictionary: weight[q, a, nq] defines the weight going from state q to state nq
+        with input a.
     """
 
     def __init__(
@@ -319,6 +324,7 @@ def prioritized_conj(wdfa1, wdfa2):
     """
     prioritized conjunction: wdfa1 is preferred to wdfa2.
     """
+    assert wdfa1.input_symbols == wdfa2.input_symbols
     states = [
         (q1, q2)
         for q1, q2 in product(wdfa1.states, wdfa2.states)
@@ -380,6 +386,7 @@ def prioritized_disj(wdfa1, wdfa2):
     """
     prioritized disjunction: wdfa1 is preferred over wdfa2
     """
+    assert wdfa1.input_symbols == wdfa2.input_symbols
     states = [
         (q1, q2)
         for q1, q2 in product(wdfa1.states, wdfa2.states)
