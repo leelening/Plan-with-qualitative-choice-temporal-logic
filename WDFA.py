@@ -421,6 +421,7 @@ def prioritized_disj(wdfa1, wdfa2):
         for q1, q2 in product(wdfa1.states, wdfa2.states)
         if q1 != "sink" and q2 != "sink"
     ]
+
     transitions = defaultdict(dict)
     transitions["sink"] = {a: "sink" for a in wdfa1.input_symbols}
 
@@ -429,14 +430,10 @@ def prioritized_disj(wdfa1, wdfa2):
     opt2 = wdfa2.get_option()
     initial_state = (wdfa1.initial_state, wdfa2.initial_state)
 
-    for (q1, q2) in states:
-        from_state = (q1, q2)
-        transitions[from_state]["end"] = from_state
-        weight[(from_state, "end", from_state)] = 0
-
-    # modify
+    # define the weight function and transition function.
     for q1, q2 in states:
         from_state = (q1, q2)
+        # handle the normal product transitions
         for a in wdfa1.input_symbols:
             if a != "end":
                 nq1 = wdfa1.transitions[q1][a]
@@ -444,6 +441,11 @@ def prioritized_disj(wdfa1, wdfa2):
                 to_state = (nq1, nq2)
                 transitions[from_state][a] = to_state
                 weight[(from_state, a, to_state)] = 0
+
+        # initialize, these transition and weight can be modified later based on conditions,
+        # but we added there for completeness.
+        transitions[from_state]["end"] = from_state
+        weight[(from_state, "end", from_state)] = 0
         if (
             "end" in wdfa1.transitions[q1]
             and "sink" in wdfa1.transitions[q1]["end"]
