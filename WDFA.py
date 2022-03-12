@@ -44,10 +44,11 @@ class WDFA(DFA):
         # if the weight is None, we initialize transitions with all 0s.
         if weight is None:
             self.weight = {
-                (q, a, nq): 0 for q in states for a in input_symbols for nq in states
+                (q, a, nq): 0 for q, a, nq in product(states, input_symbols, states)
             }
         else:
             self.weight = copy.deepcopy(weight)
+        # call the super class's initialization. NOTE: it contains super class's validate function
         super(WDFA, self).__init__(
             states=states,
             input_symbols=input_symbols,
@@ -66,11 +67,19 @@ class WDFA(DFA):
         """Validate all the weights are defined"""
         # call the dfa validate function
         super(WDFA, self).validate()
+        # validate only weights
         for q, a in product(self.states, self.input_symbols):
             nq = self.get_transition(q, a)
             try:
-                assert nq is not None  # make sure the transitions are complete
-                assert (q, a, nq) in self.weight
+                assert nq is not None
+                # make sure the transitions are complete, which is not necessary
+                # since super class' validate function is called.
+
+                assert (
+                    q,
+                    a,
+                    nq,
+                ) in self.weight  # make sure the weights are defined completely.
             except Exception:
                 print(
                     "Weight is not defined for state: {}, input_symbol: {}, next_state: {},".format(
@@ -81,11 +90,12 @@ class WDFA(DFA):
 
     def trim(self):
         """remove unreachable states"""
-        # visited states
+        # some initializations
         states = [self.initial_state]
         weight = defaultdict()
         transitions = defaultdict(dict)
         count = 0
+
         # iteratively trim the automaton
         while count < len(states):
             from_state = states[count]
@@ -97,6 +107,7 @@ class WDFA(DFA):
                 weight[from_state, a, next_state] = self.weight[
                     from_state, a, next_state
                 ]
+                # only add states not visited
                 if next_state in states:
                     pass
                 else:
@@ -154,7 +165,8 @@ class WDFA(DFA):
         return graph
 
     def get_option(self):
-        opt = 1  # by default, all formulas have at least one way to be satisfied.
+        # by default, all formulas have at least one way to be satisfied.
+        opt = 1
         for (q, a, nq) in self.weight:
             if self.weight[q, a, nq] > opt:
                 opt = self.weight[q, a, nq]
@@ -169,14 +181,13 @@ def sync_product(dfa1, dfa2):
     assert dfa1.input_symbols == dfa2.input_symbols
     new_states = {(a, b) for a, b in product(dfa1.states, dfa2.states)}
     new_transitions = defaultdict(dict)
-    for (state_a, transitions_a), (state_b, transitions_b) in product(
-        dfa1.transitions.items(), dfa2.transitions.items()
+    for (state_a, transitions_a), symbol, (state_b, transitions_b) in product(
+        dfa1.transitions.items(), dfa1.input_symbols, dfa2.transitions.items()
     ):
-        for symbol in dfa1.input_symbols:
-            new_transitions[state_a, state_b][symbol] = (
-                transitions_a[symbol],
-                transitions_b[symbol],
-            )
+        new_transitions[state_a, state_b][symbol] = (
+            transitions_a[symbol],
+            transitions_b[symbol],
+        )
     new_initial_state = (dfa1.initial_state, dfa2.initial_state)
     return DFA(
         states=new_states,
