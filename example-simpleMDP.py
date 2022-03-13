@@ -65,7 +65,11 @@ while counter <= 100 and state != "v_sink":
     action = df.loc[index]["policy"].values[0]
     next_state = product_mdp.step(state, action)
     trajectory.append((action, product_mdp.reward[state, action], next_state))
-    print("reward: {}".format(product_mdp.reward[state, action]))
+    print(
+        "grid state: {}, action: {}, reward: {}, next_state: {}.".format(
+            state, action, product_mdp.reward[state, action], next_state
+        )
+    )
     state = next_state
     counter += 1
 
