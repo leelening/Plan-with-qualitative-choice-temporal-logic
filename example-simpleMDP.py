@@ -8,6 +8,8 @@ mdp.validate()
 print("Finish validation of MDP! Printing the detailed information ...")
 print(mdp)
 print("Finish printing the MDP ...")
+print("Saving the MDP info into ./")
+mdp.save()
 
 print("Initialize the WDFA ...")
 exec(open("./example-wdfa.py").read())
@@ -19,6 +21,8 @@ print("Validate the product MDP ...")
 product_mdp.validate()
 print("Finish validation of product MDP! Printing the detailed information ...")
 print(product_mdp)
+print("Saving the Product MDP info into ./")
+product_mdp.save()
 
 from lp_mdp import LP
 

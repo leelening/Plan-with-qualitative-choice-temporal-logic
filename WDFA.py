@@ -158,7 +158,7 @@ class WDFA(DFA):
                     Edge(
                         nodes[str(from_state)],
                         nodes[str(to_state)],
-                        label=to_label + str(weight),
+                        label="{}: {}".format(to_label, weight) if weight else to_label,
                     )
                 )
         if path:
