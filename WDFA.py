@@ -338,11 +338,28 @@ def generalized_ordered_or(wdfa, dfa) -> WDFA:
             # due to generalization, that is, wdfa does not have final states.
             if nq1 == "sink":
                 prod_wdfa.transitions[q]["end"] = "sink"
-                prod_wdfa.assign_weight(q, "end", "sink", wdfa.get_option())
+                prod_wdfa.assign_weight(
+                    q,
+                    "end",
+                    "sink",
+                    min(
+                        wdfa.weight[q1, "end", nq1],
+                        prod_wdfa.weight.get((q, "end", "sink"), 100),
+                    ),
+                )
             # does not satisfy the original wdfa but satisfy the new least preferred outcome.
             elif q2 in dfa.final_states:
                 prod_wdfa.transitions[q]["end"] = "sink"
-                prod_wdfa.assign_weight(q, "end", "sink", wdfa.get_option() + 1)
+                prod_wdfa.assign_weight(
+                    q,
+                    "end",
+                    "sink",
+                    min(
+                        wdfa.get_option() + 1,
+                        prod_wdfa.weight.get((q, "end", "sink"), 100),
+                    ),
+                )
+
     prod_wdfa.validate()
     return prod_wdfa
 
