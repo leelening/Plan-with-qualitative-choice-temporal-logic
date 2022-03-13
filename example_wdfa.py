@@ -58,6 +58,11 @@ def construct_automaton_example(prefix="figure"):
     dfa3.validate()
     automaton["dfa3"] = dfa3
 
+    print("Saving constructed dfa1, dfa2, dfa3 ...")
+    dfa1.show_diagram(path="./{}/dfa1.png".format(prefix))
+    dfa2.show_diagram(path="./{}/dfa2.png".format(prefix))
+    dfa3.show_diagram(path="./{}/dfa3.png".format(prefix))
+
     # try ordered OR between dfa1 and dfa2
     orderedDFA12 = ordered_or(dfa1, dfa2)
     print("Trimming orderedDFA12 ...")
