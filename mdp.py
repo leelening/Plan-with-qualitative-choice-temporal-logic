@@ -1,9 +1,12 @@
-__author__ = "Jie Fu and Lening Li"
-__email__ = "fujie@ufl.edu and lli4@wpi.edu"
+__authors__ = ["Jie Fu", "Lening Li"]
+__emails__ = ["fujie@ufl.edu", "lli4@wpi.edu"]
+__copyright__ = "Copyright 2022, The Qualitative Logic + Temporal Logic Project"
+__date__ = "2022-03-12"
+
+__license__ = "GPL"
 __version__ = "0.0.1"
-__maintainer__ = "Jie Fu and Lening Li"
 __description__ = "This code defines a class of Markov Decision Process."
-__name__ = "MDP"
+__status__ = "Production"
 
 import numpy as np
 import yaml
@@ -55,6 +58,7 @@ class MDP(object):
         self.prob = kwargs.pop("prob", defaultdict)
         self.AP = kwargs.pop("AP", [])
         self.L = kwargs.pop("L", {})
+        self.obstacles = kwargs.pop("obstacles", [])
         self.validate()
 
     def step(self, state, action, num=1):
@@ -88,19 +92,54 @@ class MDP(object):
         return df
 
     def __str__(self):
+        """return a string of MDP information."""
         df = self.get_mdp_info()
         return tabulate(df, showindex=False, headers=df.columns)
 
     def save(self):
+        """save the MDP information."""
         df = self.get_mdp_info()
         df.to_csv("{}.csv".format(type(self).__name__))
 
     def validate(self):
         for state in self.states:
+            possible_next_states = set()
             for action in self.prob[state]:
+                possible_next_states.update(set(self.prob[state][action].keys()))
+
+                # check if the sum of probabilities is equal to 1
                 try:
                     assert abs(sum(self.prob[state][action].values()) - 1) < 1e-6
-                except Exception as e:
-                    raise ValueError(
-                        "Error: {} for state: {}, action: {}.".format(e, state, action)
+                except AssertionError:
+                    raise AssertionError(
+                        "Error in transition probability for state: {}, action: {}.".format(
+                            state, action
+                        )
+                    )
+
+                # check if the obstacles are valid
+                if state in self.obstacles:
+                    try:
+                        assert abs(self.prob[state][action][state] - 1) < 1e-6
+                    except AssertionError:
+                        raise AssertionError(
+                            "Error in obstacles for state: {}, action: {}.".format(
+                                state, action
+                            )
+                        )
+
+            # check if the state not in obstacles should go out. NOTE that product mdp does not have obstacles, so we
+            # add len(self.obstacles) > 0 into the condition
+            if state not in self.obstacles and len(self.obstacles) > 0:
+                possible_next_states = list(possible_next_states)
+                try:
+                    assert not possible_next_states.count(
+                        possible_next_states[0]
+                    ) == len(possible_next_states)
+                except AssertionError:
+                    raise AssertionError(
+                        "Error in transition probability for state: {}, possible next states: {}."
+                        "Any state not in obstacles should go out of itself.".format(
+                            state, possible_next_states
+                        )
                     )
