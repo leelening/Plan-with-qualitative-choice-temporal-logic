@@ -96,10 +96,13 @@ class MDP(object):
         df = self.get_mdp_info()
         return tabulate(df, showindex=False, headers=df.columns)
 
-    def save(self):
+    def save(self, prefix=None):
         """save the MDP information."""
         df = self.get_mdp_info()
-        df.to_csv("{}.csv".format(type(self).__name__))
+        if prefix is None:
+            df.to_csv("{}.csv".format(type(self).__name__))
+        else:
+            df.to_csv("./{}/{}.csv".format(prefix, type(self).__name__))
 
     def validate(self):
         for state in self.states:

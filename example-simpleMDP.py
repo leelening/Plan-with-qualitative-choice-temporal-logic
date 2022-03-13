@@ -1,33 +1,37 @@
-from torch._jit_internal import ignore
-
 from mdp import MDP
 from product_mdp import ProductMDP
-import os
 import pandas as pd
+from example_wdfa import construct_automaton_example
+from utils import *
 
+#####
+file_path = "deterministic_gridworld_feasible_a.yaml"
+spec = "orderedDFA12"
+path = file_path.split(".")[0] + "_" + spec
+check_existence(path)
+#####
 print("Initializing the MPD ...")
-mdp = MDP(file_path="ex.yaml")
+mdp = MDP(file_path=file_path)
 print("Validating the MDP ...")
 mdp.validate()
 print("Finish validation of MDP! Printing the detailed information ...")
 print(mdp)
 print("Finish printing the MDP ...")
 print("Saving the MDP info into ./MDP.csv")
-mdp.save()
+mdp.save(path)
 
 print("Initializing the WDFA ...")
-exec(open("./example-wdfa.py").read())
+automaton = construct_automaton_example()
 print("Constructing the product MDP ...")
 # the objective is to reach a state labeled 'b'.
-automaton = "orderedDFA12"
-product_mdp = ProductMDP(mdp, orderedDFA12)
+product_mdp = ProductMDP(mdp, automaton[spec])
 print("Validating the product MDP ...")
 # explicitly validate the mdp
 product_mdp.validate()
 print("Finish validation of product MDP! Printing the detailed information ...")
 print(product_mdp)
 print("Saving the Product MDP info into ./ProductMDP.csv")
-product_mdp.save()
+product_mdp.save(path)
 
 from lp_mdp import LP
 
@@ -35,7 +39,7 @@ print("Start computing the product MDP ...")
 df = LP(product_mdp)
 print("End of the computation of the product MDP...")
 print("Saving results of product MDP ...")
-df.to_csv("./results.csv")
+df.to_csv("./{}/results.csv".format(path))
 
 print("Start simulating the product MDP ...")
 state = product_mdp.init

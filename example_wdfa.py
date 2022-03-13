@@ -8,9 +8,12 @@ __description__ = (
 )
 
 from WDFA import *
+from utils import *
 
 
-def construct_automaton_example():
+def construct_automaton_example(prefix="figure"):
+    check_existence(prefix)
+
     automaton = dict()
     # Eventually A
     dfa1 = DFA(
@@ -57,17 +60,17 @@ def construct_automaton_example():
 
     # try ordered OR between dfa1 and dfa2
     orderedDFA12 = ordered_or(dfa1, dfa2)
-    orderedDFA12.show_diagram(path="./orderedDFA12.png")
+    orderedDFA12.show_diagram(path="./{}/orderedDFA12.png".format(prefix))
     automaton["orderedDFA12"] = orderedDFA12
 
     # try ordered OR between dfa3 and dfa2
     orderedDFA = ordered_or(dfa3, dfa2)
-    orderedDFA.show_diagram(path="./orderedDFA.png")
+    orderedDFA.show_diagram(path="./{}/orderedDFA.png".format(prefix))
     automaton["orderedDFA"] = orderedDFA
 
     # try generalized ordered OR between
     orderedDFA2 = generalized_ordered_or(orderedDFA, dfa1)
-    orderedDFA2.show_diagram(path="./orderedDFA2.png")
+    orderedDFA2.show_diagram(path="./{}/orderedDFA2.png".format(prefix))
     automaton["orderedDFA2"] = orderedDFA2
 
     # create 3 wdfa
@@ -84,11 +87,11 @@ def construct_automaton_example():
     # try the prioritized conjunction between wdfa3 and wdfa2
     conj_wdfa = prioritized_conj(wdfa3, wdfa2)
     conj_wdfa.trim()
-    conj_wdfa.show_diagram(path="./conj_wdfa.png")
+    conj_wdfa.show_diagram(path="./{}/conj_wdfa.png".format(prefix))
     automaton["conj_wdfa"] = conj_wdfa
 
     # try the prioritized disconjunction between wdfa3 and wdfa2
     disj_wdfa = prioritized_disj(wdfa3, wdfa2)
-    disj_wdfa.show_diagram(path="./disj_wdfa.png")
+    disj_wdfa.show_diagram(path="./{}/disj_wdfa.png".format(prefix))
     automaton["disj_wdfa"] = disj_wdfa
     return automaton
