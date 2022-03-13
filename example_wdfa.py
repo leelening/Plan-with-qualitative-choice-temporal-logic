@@ -77,6 +77,13 @@ def construct_automaton_example(prefix="figure"):
     orderedDFA31.show_diagram(path="./{}/orderedDFA31.png".format(prefix))
     automaton["orderedDFA31"] = orderedDFA31
 
+    # try ordered OR between dfa3 and dfa2
+    orderedDFA32 = ordered_or(dfa3, dfa2)
+    print("Trimming orderedDFA32 ...")
+    orderedDFA32.trim()
+    orderedDFA32.show_diagram(path="./{}/orderedDFA32.png".format(prefix))
+    automaton["orderedDFA32"] = orderedDFA32
+
     # try generalized ordered OR between
     orderedDFA312 = generalized_ordered_or(orderedDFA31, dfa2)
     print("Trimming orderedDFA312 ...")
@@ -95,17 +102,17 @@ def construct_automaton_example(prefix="figure"):
     wdfa3.validate()
     automaton["wdfa3"] = wdfa3
 
-    # try the prioritized conjunction between wdfa3 and wdfa2
-    conj_wdfa = prioritized_conj(wdfa3, wdfa2)
-    print("Trimming conj_wdfa ...")
-    conj_wdfa.trim()
-    conj_wdfa.show_diagram(path="./{}/conj_wdfa.png".format(prefix))
-    automaton["conj_wdfa"] = conj_wdfa
+    # try the prioritized conjunction between wdfa3 and wdfa1
+    conj_wdfa31 = prioritized_conj(wdfa3, wdfa1)
+    print("Trimming conj_wdfa31 ...")
+    conj_wdfa31.trim()
+    conj_wdfa31.show_diagram(path="./{}/conj_wdfa31.png".format(prefix))
+    automaton["conj_wdfa31"] = conj_wdfa31
 
-    # try the prioritized disconjunction between wdfa3 and wdfa2
-    disj_wdfa = prioritized_disj(wdfa3, wdfa2)
-    print("Trimming disj_wdfa ...")
-    disj_wdfa.trim()
-    disj_wdfa.show_diagram(path="./{}/disj_wdfa.png".format(prefix))
-    automaton["disj_wdfa"] = disj_wdfa
+    # try the prioritized disconjunction between wdfa3 and wdfa1
+    disj_wdfa31 = prioritized_disj(wdfa3, wdfa1)
+    print("Trimming disj_wdfa31 ...")
+    disj_wdfa31.trim()
+    disj_wdfa31.show_diagram(path="./{}/disj_wdfa31.png".format(prefix))
+    automaton["disj_wdfa31"] = disj_wdfa31
     return automaton
