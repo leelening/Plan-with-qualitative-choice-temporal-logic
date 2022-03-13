@@ -6,6 +6,7 @@ __license__ = "GPL"
 __version__ = "0.0.1"
 __description__ = "the code implementations a product Markov Decision Process"
 __status__ = "Production"
+__name__ = "ProductMDP"
 
 from mdp import MDP
 from WDFA import *
