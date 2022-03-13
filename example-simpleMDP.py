@@ -12,7 +12,8 @@ file = "deterministic_gridworld_feasible_a"
 # file = "stochastic_gridworld_infeasible_a"
 
 # spec = "orderedDFA12"
-spec = "orderedDFA31"
+# spec = "orderedDFA31"
+spec = "orderedDFA312"
 
 file_path = prefix + "/{}.yaml".format(file)
 path = file + "_" + spec
