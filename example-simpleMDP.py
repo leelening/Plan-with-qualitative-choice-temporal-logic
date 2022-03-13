@@ -4,10 +4,18 @@ import pandas as pd
 from example_wdfa import construct_automaton_example
 from utils import *
 
+prefix = "./environment"
 #####
-file_path = "deterministic_gridworld_feasible_a.yaml"
-spec = "orderedDFA12"
-path = file_path.split(".")[0] + "_" + spec
+file = "deterministic_gridworld_feasible_a"
+# file = "deterministic_gridworld_infeasible_a"
+# file = "stochastic_gridworld_feasible_a"
+# file = "stochastic_gridworld_infeasible_a"
+
+# spec = "orderedDFA12"
+spec = "orderedDFA31"
+
+file_path = prefix + "/{}.yaml".format(file)
+path = file + "_" + spec
 check_existence(path)
 #####
 print("Initializing the MPD ...")
@@ -53,6 +61,7 @@ while counter <= 100 and state != "v_sink":
     action = df.loc[index]["policy"].values[0]
     next_state = product_mdp.step(state, action)
     trajectory.append((action, product_mdp.reward[state, action], next_state))
+    print("reward: {}".format(product_mdp.reward[state, action]))
     state = next_state
     counter += 1
 
@@ -66,7 +75,7 @@ else:
     df1 = pd.DataFrame({"Description": [], "Trajectory": []})
 df1 = df1.append(
     {
-        "Description": "mdp_{}_automaton_{}".format(mdp.name, str(automaton)),
+        "Description": "mdp_{}_automaton_{}".format(file, spec),
         "Trajectory": trajectory,
         "States": [x[-1][0] for x in trajectory],
     },
