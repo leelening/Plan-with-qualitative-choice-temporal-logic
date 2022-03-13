@@ -3,12 +3,14 @@ __email__ = "fujie@ufl.edu and lli4@wpi.edu"
 __version__ = "0.0.1"
 __maintainer__ = "Jie Fu and Lening Li"
 __description__ = "This code defines a class of Markov Decision Process."
+__name__ = "MDP"
 
 import numpy as np
 import yaml
 from collections import defaultdict
 import pandas as pd
 from tabulate import tabulate
+from pprint import pformat
 
 
 class MDP(object):
@@ -20,7 +22,7 @@ class MDP(object):
      4. gamma value, for use by algorithms
      5. AP: a set of atomic propositions implemented as a list: Each proposition is identified by an index between 0-N.
      6. L: the labeling function implemented as a dictionary: L[s]: a subset of AP.
-     7. sink: a list of terminal states
+     7. obstacles: a list of terminal states
     We keep track of the possible actions for state s: prob[s].keys() and possible next states with action a: prob[s][a].keys()
     """
 
@@ -71,15 +73,27 @@ class MDP(object):
         ]
         return nest_state
 
-    def __str__(self):
+    def get_mdp_info(self):
         """Print the information about the defined Markov Decision Process."""
         t = {"Description": [], "Value": []}
         for attr in dir(self):
             if not callable(getattr(self, attr)) and not attr.startswith("__"):
                 t["Description"].append(attr)
-                t["Value"].append(getattr(self, attr))
+                if isinstance(getattr(self, attr), defaultdict):
+                    t["Value"].append(pformat(dict(getattr(self, attr))))
+                else:
+                    t["Value"].append(pformat(getattr(self, attr)))
+
         df = pd.DataFrame(t)
+        return df
+
+    def __str__(self):
+        df = self.get_mdp_info()
         return tabulate(df, showindex=False, headers=df.columns)
+
+    def save(self):
+        df = self.get_mdp_info()
+        df.to_csv("{}.csv".format(type(self).__name__))
 
     def validate(self):
         for state in self.states:
