@@ -55,28 +55,28 @@ class ProductMDP(MDP):
 
     def initialize_transitions_reward(self, states, actlist):
         prob, reward = defaultdict(lambda: defaultdict(dict)), defaultdict(float)
-        N = len(states)
 
         # N is the number of nonsink states. the transition function is defined for N+1 states.
-        for (i, (s, q)), a, (j, (next_s, next_q)) in product(
-            enumerate(states), actlist, enumerate(states)
-        ):
+        for (s, q), a, (next_s, next_q) in product(states, actlist, states):
             if next_s in self._mdp.prob[s][a]:
                 if next_q == self._wdfa.transitions[q][self._mdp.L[next_s]]:
-                    prob[i][a][j] = self._mdp.prob[s][a][next_s]
-
-        # adding a new action called "stop" and the new sink.
-        actlist.append("stop")
+                    prob[s, q][a][next_s, next_q] = self._mdp.prob[s][a][next_s]
 
         options = self._wdfa.get_option()
-        for i, (s, q) in enumerate(states):
+        for s, q in states:
             # from the current state q, then agent can stop and append the end symbol to the word.
-            if "end" in self._wdfa.transitions[q] and "sink" == self._wdfa.transitions[q]["end"]:
+            if (
+                "end" in self._wdfa.transitions[q]
+                and "sink" == self._wdfa.transitions[q]["end"]
+            ):
                 # once the action stop is taken, then with probability one the agent reaches the sink state.
-                prob[i]["stop"][N] = 1
-                reward[i, "stop"] = (
+                prob[s, q]["stop"]["v_sink"] = 1
+                reward[(s, q), "stop"] = (
                     options - self._wdfa.weight[q, "end", "sink"] + 1
                 )
+        # adding a new action called "stop" and the new sink.
+        actlist.append("stop")
+        states.add("v_sink")
         for a in actlist:
-            prob[N][a][N] = 1
+            prob["v_sink"][a]["v_sink"] = 1
         return prob, reward, actlist

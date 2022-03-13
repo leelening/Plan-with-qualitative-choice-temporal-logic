@@ -17,10 +17,10 @@ def LP(mdp):
     m.objective = minimize(xsum(c[i] * v[i] for i, _ in enumerate(mdp.states)))
 
     for (i, state), action in product(enumerate(mdp.states), mdp.actlist):
-        m += v[i] >= mdp.reward[i, action] + mdp.gamma * xsum(
-            mdp.prob[i][action][j] * v[j]
-            for j, _ in enumerate(mdp.states)
-            if j in mdp.prob[i][action]
+        m += v[i] >= mdp.reward[state, action] + mdp.gamma * xsum(
+            mdp.prob[state][action][next_state] * v[j]
+            for j, next_state in enumerate(mdp.states)
+            if next_state in mdp.prob[state][action]
         )
 
     # start solving the minimization problem
@@ -48,4 +48,26 @@ def LP(mdp):
                 "value": [x.x for x in v],
             }
         )
+        df["policy"] = extract_policy(mdp, [x.x for x in v])
         print(df)
+    return df
+
+
+def extract_policy(mdp, v):
+    policy = []
+    for i, state in enumerate(mdp.states):
+        q = [
+            mdp.reward[state, action]
+            + mdp.gamma
+            * sum(
+                [
+                    mdp.prob[state][action][next_state] * v[j]
+                    for j, next_state in enumerate(mdp.states)
+                    if next_state in mdp.prob[state][action]
+                ]
+            )
+            for action in mdp.actlist
+        ]
+        opt_a = mdp.actlist[np.argmax(q)]
+        policy.append(opt_a)
+    return policy

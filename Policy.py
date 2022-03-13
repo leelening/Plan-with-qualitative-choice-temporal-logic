@@ -1,6 +1,6 @@
 __author__ = "Jie Fu, jief@seas.upenn.edu"
 
-from MDP import *
+from mdp import *
 import numpy as np
 import random
 import copy

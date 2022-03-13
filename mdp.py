@@ -61,11 +61,14 @@ class MDP(object):
         assert state in self.states
         # Note that only one element is chosen from the array, which is the output by random.choice
         possible_next_states_probabilities = self.prob[state][action]
-        nest_state = np.random.choice(
-            list(possible_next_states_probabilities.keys()),
-            num,
-            p=list(possible_next_states_probabilities.values()),
-        )[0]
+        possible_next_states = list(possible_next_states_probabilities.keys())
+        nest_state = possible_next_states[
+            np.random.choice(
+                len(possible_next_states),
+                num,
+                p=list(possible_next_states_probabilities.values()),
+            )[0]
+        ]
         return nest_state
 
     def __str__(self):
