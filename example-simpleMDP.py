@@ -37,7 +37,6 @@ trajectory.append((state,))
 while counter <= 100 and state != "v_sink":
     index = df["state"] == state
     action = df.loc[index]["policy"].values[0]
-    print(action)
     next_state = product_mdp.step(state, action)
     trajectory.append((action, product_mdp.reward[state, action], next_state))
     state = next_state
