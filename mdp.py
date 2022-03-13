@@ -14,6 +14,7 @@ from collections import defaultdict
 import pandas as pd
 from tabulate import tabulate
 from pprint import pformat
+from utils import *
 
 
 class MDP(object):
@@ -102,6 +103,7 @@ class MDP(object):
         if prefix is None:
             df.to_csv("{}.csv".format(type(self).__name__))
         else:
+            check_existence(prefix)
             df.to_csv("./{}/{}.csv".format(prefix, type(self).__name__))
 
     def validate(self):
