@@ -54,7 +54,7 @@ class MDP(object):
         self.init = kwargs.pop("init", None)
         self.actlist = kwargs.pop("actlist", [])
         self.states = kwargs.pop("states", [])
-        self.gamma = kwargs.pop("gamma", 0.9)
+        self.gamma = kwargs.pop("gamma", 0.99)
         self.reward = kwargs.pop("reward", {})
         self.prob = kwargs.pop("prob", defaultdict)
         self.AP = kwargs.pop("AP", [])
