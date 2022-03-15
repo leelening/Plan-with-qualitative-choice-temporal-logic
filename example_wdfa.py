@@ -115,4 +115,18 @@ def construct_automaton_example(prefix="figure"):
     disj_wdfa31.trim()
     disj_wdfa31.show_diagram(path="./{}/disj_wdfa31.png".format(prefix))
     automaton["disj_wdfa31"] = disj_wdfa31
+
+    # try the prioritized conjunction between orderedDFA31 and orderedDFA12
+    conj_wdfa3112 = prioritized_conj(orderedDFA31, orderedDFA12)
+    print("Trimming conj_wdfa3112 ...")
+    conj_wdfa3112.trim()
+    conj_wdfa3112.show_diagram(path="./{}/conj_wdfa3112.png".format(prefix))
+    automaton["conj_wdfa3112"] = conj_wdfa3112
+
+    # try the prioritized disconjunction between orderedDFA31 and orderedDFA12
+    disj_wdfa3112 = prioritized_disj(orderedDFA31, orderedDFA12)
+    print("Trimming disj_wdfa3112 ...")
+    disj_wdfa3112.trim()
+    disj_wdfa3112.show_diagram(path="./{}/disj_wdfa3112.png".format(prefix))
+    automaton["disj_wdfa3112"] = disj_wdfa3112
     return automaton
