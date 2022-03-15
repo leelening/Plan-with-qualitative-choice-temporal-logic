@@ -11,13 +11,13 @@ file = "deterministic_gridworld_feasible_a"
 # file = "stochastic_gridworld_feasible_a"
 # file = "stochastic_gridworld_infeasible_a"
 
-# spec = "orderedDFA12"
-# spec = "orderedDFA31"
-# spec = "orderedDFA312"
-# spec = "conj_wdfa31"
-# spec = "disj_wdfa31"
-# spec = "conj_wdfa3112"
-spec = "disj_wdfa3112"
+# spec = "orderedDFA12"  # slide 3
+# spec = "orderedDFA31"  # slide 4
+# spec = "orderedDFA312"  # slide 5
+# spec = "conj_wdfa31"  # slide 6
+# spec = "disj_wdfa31"  # slide 7
+# spec = "conj_wdfa3112"  # slide 8
+spec = "disj_wdfa3112"  # slid 9
 
 file_path = prefix + "/{}.yaml".format(file)
 path = file + "_" + spec
