@@ -81,13 +81,19 @@ class WDFA(DFA):
                     a,
                     nq,
                 ) in self.weight  # make sure the weights are defined completely.
-            except Exception:
+            except AssertionError:
                 print(
                     "Weight is not defined for state: {}, input_symbol: {}, next_state: {},".format(
                         q, a, nq
                     )
                 )
                 exit(-1)
+        try:
+            assert hasattr(self, "opt")
+        except AssertionError:
+            print(
+                "This WDFA is not initialized completely. It does not have opt defined."
+            )
 
     def trim(self) -> None:
         """remove unreachable states"""
@@ -165,13 +171,11 @@ class WDFA(DFA):
             graph.write_png(path)
         return graph
 
+    def set_option(self, opt=1):
+        self.opt = opt
+
     def get_option(self) -> int:
-        # by default, all formulas have at least one way to be satisfied.
-        opt = 1
-        for (q, a, nq) in self.weight:
-            if self.weight[q, a, nq] > opt:
-                opt = self.weight[q, a, nq]
-        return opt
+        return self.opt
 
 
 def sync_product(dfa1, dfa2) -> DFA:
@@ -240,6 +244,8 @@ def get_wdfa_from_dfa(dfa) -> WDFA:
         # modify the transition
         assert nq is not None
         wdfa.transitions[q][a] = nq
+    # opt(varphi) = 1
+    wdfa.set_option(1)
     wdfa.validate()
     return wdfa
 
@@ -282,6 +288,8 @@ def ordered_or(dfa1, dfa2) -> WDFA:
             elif q2 in dfa2.final_states:
                 prod_wdfa.transitions[q]["end"] = "sink"
                 prod_wdfa.assign_weight(q, "end", "sink", 2)
+    # opt(varphi1) + opt(varphi2)
+    prod_wdfa.set_option(2)
     prod_wdfa.validate()
     return prod_wdfa
 
@@ -359,7 +367,8 @@ def generalized_ordered_or(wdfa, dfa) -> WDFA:
                         prod_wdfa.weight.get((q, "end", "sink"), 100),
                     ),
                 )
-
+    # opt(varphi1) + opt(varphi2)
+    prod_wdfa.set_option(wdfa.get_option() + 1)
     prod_wdfa.validate()
     return prod_wdfa
 
@@ -423,6 +432,8 @@ def prioritized_conj(wdfa1, wdfa2) -> WDFA:
         final_states=set(),
         weight=weight,
     )
+    # opt(varphi1) * opt(varphi2)
+    conj_wdfa.set_option(wdfa1.get_option() * wdfa2.get_option())
     conj_wdfa.validate()
     return conj_wdfa
 
@@ -509,6 +520,8 @@ def prioritized_disj(wdfa1, wdfa2):
         final_states=set(),
         weight=weight,
     )
+    # opt(varphi1) * opt(varphi2)
+    disj_wdfa.set_option(wdfa1.get_option() * wdfa2.get_option())
     disj_wdfa.validate()
     return disj_wdfa
 
