@@ -48,6 +48,7 @@ class ProductMDP(MDP):
             init=init,
             actlist=actlist,
             states=states,
+            gamma=mdp.gamma,
             reward=reward,
             prob=prob,
             AP=mdp.AP,
