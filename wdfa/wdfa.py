@@ -165,6 +165,3 @@ class WDFA(DFA):
         # print("set_option: {}".format(opt))
         # print("*" * 10)
         self.opt = opt
-
-    def get_option(self) -> int:
-        return self.opt

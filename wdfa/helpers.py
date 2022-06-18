@@ -65,15 +65,15 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
                     q,
                     "end",
                     "sink",
-                    wdfa2.weight[q2, "end", "sink"] + wdfa1.get_option(),
+                    wdfa2.weight[q2, "end", "sink"] + wdfa1.opt,
                 )
             elif (
                 wdfa1.weight[q1, "end", "sink"] > 0
                 and wdfa2.weight[q2, "end", "sink"] == 0
             ):
-                prod_wdfa.assign_weight(q, "end", "sink", wdfa1.get_option())
+                prod_wdfa.assign_weight(q, "end", "sink", wdfa1.opt)
 
-    prod_wdfa.set_option(wdfa1.get_option() + wdfa2.get_option())
+    prod_wdfa.set_option(wdfa1.opt + wdfa2.opt)
     prod_wdfa.validate()
     return prod_wdfa
 
@@ -164,11 +164,11 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
 
 def sync_conj(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
     wdfa = sync(wdfa1, wdfa2)
-    wdfa.set_option(wdfa1.get_option() * wdfa2.get_option())
+    wdfa.set_option(wdfa1.opt * wdfa2.opt)
     return wdfa
 
 
 def sync_or(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
     wdfa = sync(wdfa1, wdfa2)
-    wdfa.set_option(wdfa1.get_option() + wdfa2.get_option())
+    wdfa.set_option(wdfa1.opt + wdfa2.opt)
     return wdfa
