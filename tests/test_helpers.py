@@ -26,6 +26,8 @@ PRIORITIZED_CONJ_TEST_CASE = (
 PRIORITIZED_CONJ_TEST_CASE = (
     ((("1", "1"), ("1", "1")), "end", "sink", 1),
     ((("2", "1"), ("1", "1")), "end", "sink", 3),
+    ((("2", "1"), ("1", "0")), "end", "sink", 3),
+    ((("1", "0"), ("0", "1")), "end", "sink", 2),
 )
 
 
