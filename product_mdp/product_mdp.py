@@ -43,9 +43,8 @@ class ProductMDP(MDP):
             L=mdp.L,
         )
 
-    def construct_reward(self, states, actlist):
+    def construct_reward(self, states: , actlist):
         reward = defaultdict(float)
-
         for (s, q), a in product(states, actlist):
             if (a == "aT") and (q != "sink") and (self.weight[q, "end", "sink"] > 0):
                 reward[(s, q), a] = (

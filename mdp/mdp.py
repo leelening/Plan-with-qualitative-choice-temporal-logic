@@ -110,7 +110,7 @@ class MDP(object):
 
         self.states.append("sT")
         self.actlist.append("aT")
-        self.AP["end"] = None
+        self.AP.append("end")
         return transitions
 
     def neighbors(self, s: tuple, a: int) -> set:
