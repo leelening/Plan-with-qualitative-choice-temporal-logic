@@ -16,3 +16,6 @@ dfa = DFA(
 
 def test_get_wdfa_from_dfa():
     wdfa = get_wdfa_from_dfa(dfa)
+
+
+# TODO: test_ordered_or
