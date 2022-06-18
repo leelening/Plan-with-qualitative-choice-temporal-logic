@@ -139,11 +139,9 @@ class MDP(object):
         )
         return neighbors_set
 
-    def transition_matrix_str(
-        self,
-    ):
+    def transition_matrix_str(self, fmt: str):
         """
-        Return human-read-friendly transition matrix of the MDP
+        Return the transition matrix of the MDP given the format
 
         :return: the readable transition matrix of the mdp
         :rtype: str
@@ -153,13 +151,12 @@ class MDP(object):
             for a in self.transitions[s]:
                 for ns in self.transitions[s][a]:
                     data.append([s, a, ns, self.transitions[s][a][ns]])
-        return tabulate(data, headers=["s", "a", "ns", "p"])
+        return tabulate(data, headers=["s", "a", "ns", "p"], tablefmt=fmt)
 
-    def __str__(self):
+    def __str__(self, fmt="presto"):
         data = [
             ["S", self.states],
             ["A", self.actlist],
-            ["P"],
-            self.transition_matrix_str,
+            ["P", self.transition_matrix_str(fmt)],
         ]
-        return tabulate(data, headers=["Variable", "Value"])
+        return tabulate(data, headers=["Variable", "Value"], tablefmt=fmt)
