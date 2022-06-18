@@ -18,7 +18,8 @@ dfa = DFA(
 
 WEIGHT_TEST_CASE = (
     (dfa, "0", "end", "sink", 0),
-    (dfa, "0", "a", "0", 0),
+    (dfa, "0", "a", "1", 0),
+    (dfa, "0", "b", "0", 0),
     (dfa, "1", "b", "1", 0),
     (dfa, "1", "end", "sink", 1),
 )
