@@ -1,5 +1,6 @@
-from wdfa.helpers import get_wdfa_from_dfa
 from automata.fa.dfa import DFA
+
+from wdfa.helpers import get_wdfa_from_dfa
 
 dfa = DFA(
     states={"0", "1"},

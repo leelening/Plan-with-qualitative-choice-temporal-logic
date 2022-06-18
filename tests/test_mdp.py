@@ -1,8 +1,10 @@
 import pytest
-from mdp import MDP
 import numpy as np
 from itertools import product
 from numpy.testing import assert_array_equal
+
+from mdp.mdp import MDP
+
 
 FILE = "/home/lening/Desktop/qualitative_choice_logic/environment/8 x 8/1.yaml"
 

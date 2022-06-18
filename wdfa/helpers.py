@@ -1,9 +1,9 @@
 from automata.fa.dfa import DFA
-from wdfa.wdfa import wdfa
+from wdfa.wdfa import WDFA
 from itertools import product
 
 
-def get_wdfa_from_dfa(dfa: automata.fa.dfa.DFA) -> wdfa:
+def get_wdfa_from_dfa(dfa: DFA) -> WDFA:
     """
     Return a wdfa from a given dfa
 
