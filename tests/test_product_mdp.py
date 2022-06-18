@@ -1,16 +1,18 @@
 from numpy.testing import assert_array_equal
 import numpy as np
 from itertools import product
+from tabulate import tabulate
 
 
-# def test_product_mdp_transition(construct_product_mdp):
-#     product_mdp = construct_product_mdp
-
-#     for s, a in product(product_mdp.states, product_mdp.actlist):
-#         assert_array_equal(
-#             np.sum(
-#                 product_mdp.transitions[s][a][ns]
-#                 for ns in product_mdp.transitions[s][a]
-#             ),
-#             1,
-#         )
+def test_product_mdp_transition(construct_product_mdp):
+    product_mdp = construct_product_mdp
+    for s in product_mdp.transitions:
+        for a in product_mdp.transitions[a]:
+            sum_probs = np.sum(
+                product_mdp.transitions[s][a][ns]
+                for ns in product_mdp.transitions[s][a]
+            )
+            assert_array_equal(
+                sum_probs,
+                1,
+            )

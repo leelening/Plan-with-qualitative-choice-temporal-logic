@@ -161,12 +161,8 @@ class WDFA(DFA):
         return graph
 
     def set_option(self, opt=1):
-        # print(" ")
-        # print("*" * 10)
-        # print("set_option: {}".format(opt))
-        # print("*" * 10)
         self.opt = opt
 
     def __str__(self, fmt="presto"):
-        data = [["Q", self.states], ["AP", self.input_symbols]]
+        data = [["Q", self.states], ["AP", self.input_symbols], ["opt", self.opt]]
         return tabulate(data, headers=["Variable", "Value"], tablefmt=fmt)

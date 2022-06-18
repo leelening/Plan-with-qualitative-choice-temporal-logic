@@ -1,5 +1,3 @@
-from hashlib import new
-from tkinter import W
 from automata.fa.dfa import DFA
 from collections import defaultdict
 from itertools import product
