@@ -47,7 +47,7 @@ class MDP(object):
             if s in self.obstacles:
                 self.L[s] = "o"
             elif s not in labeled_states:
-                self.L[s] = "e"
+                self.L[s] = "E"
 
     def a_array(self, a: int) -> np.array:
         """

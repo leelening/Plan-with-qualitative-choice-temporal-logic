@@ -11,7 +11,7 @@ def get_wdfa_from_dfa(dfa: DFA) -> WDFA:
     :return the converted wdfa
     """
 
-    wdfa = wdfa(
+    wdfa = WDFA(
         dfa.states,
         dfa.input_symbols,
         dfa.transitions,
@@ -21,13 +21,13 @@ def get_wdfa_from_dfa(dfa: DFA) -> WDFA:
     wdfa.states.add("sink")
     wdfa.input_symbols.add("end")
     wdfa.transitions["sink"] = {a: "sink" for a in wdfa.input_symbols}
+    for a in wdfa.input_symbols:
+        wdfa.assign_weight("sink", a, "sink", 0)
 
     for q in wdfa.states:
         if q != "sink":
             wdfa.transitions[q]["end"] = "sink"
-        wdfa.assign_weight(
-            q, "end", "sink", 1
-        )  # since all transitions are initialized to be all zeros
+        wdfa.assign_weight(q, "end", "sink", 1)
 
     wdfa.set_option(1)
     wdfa.validate()

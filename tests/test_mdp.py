@@ -76,3 +76,9 @@ def test_transition(s, a, ns, p):
 def test_print():
     mdp = MDP(file_path=FILE)
     print(mdp)
+
+
+def test_labels():
+    mdp = MDP(file_path=FILE)
+    for s in mdp.states:
+        assert mdp.L[s] in mdp.AP

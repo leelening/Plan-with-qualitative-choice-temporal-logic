@@ -43,7 +43,14 @@ class WDFA(DFA):
             final_states=final_states,
         )
 
-    def get_transition(self, q, a) -> Optional[int]:
+    def get_transition(self, q: str, a: str) -> Optional[str]:
+        """
+        Get the next state given the current state and input label
+
+        :param q: the current automaton state
+        :param a: the input label
+        :return: the next automaton state
+        """
         return self.transitions[q][a] if a in self.transitions[q] else None
 
     def assign_weight(self, q, a, nq, weight) -> None:
@@ -464,7 +471,3 @@ def prioritized_disj(wdfa1, wdfa2):
     disj_wdfa.set_option(wdfa1.get_option() * wdfa2.get_option())
     disj_wdfa.validate()
     return disj_wdfa
-
-
-if __name__ == "__main__":
-    print("to add main")
