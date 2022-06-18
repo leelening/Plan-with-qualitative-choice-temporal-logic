@@ -44,4 +44,4 @@ def test_sync():
     wdfa2 = get_wdfa_from_dfa(dfa2)
 
     sync_dfa = sync(wdfa1, wdfa2)
-    sync.validate()
+    sync_dfa.validate()
