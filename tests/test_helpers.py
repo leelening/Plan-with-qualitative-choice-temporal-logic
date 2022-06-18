@@ -2,6 +2,7 @@ from automata.fa.dfa import DFA
 
 from wdfa.helpers import get_wdfa_from_dfa, sync
 
+# eventually A
 dfa1 = DFA(
     states={"0", "1"},
     input_symbols={"a", "b", "E"},
@@ -43,3 +44,4 @@ def test_sync():
     wdfa2 = get_wdfa_from_dfa(dfa2)
 
     sync_dfa = sync(wdfa1, wdfa2)
+    sync.validate()
