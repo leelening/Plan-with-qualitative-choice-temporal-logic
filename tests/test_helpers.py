@@ -20,6 +20,9 @@ ORDERED_OR_TEST_CASE_SIMPLE = (
 ORDERED_OR_TEST_CASE_COMPLEX = (
     ((("1", "1"), "1"), "end", "sink", 1),
     ((("2", "1"), "1"), "end", "sink", 2),
+    ((("2", "1"), "0"), "end", "sink", 2),
+    ((("1", "0"), "1"), "end", "sink", 1),
+    ((("1", "0"), "1"), "a", (("1", "1"), "1"), 0),
 )
 
 PRIORITIZED_CONJ_TEST_CASE_SIMPLE = (
