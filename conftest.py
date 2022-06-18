@@ -8,7 +8,6 @@ from product_mdp.product_mdp import ProductMDP
 
 @pytest.fixture
 def construct_eventually_a_dfa():
-    # eventually A
     dfa = DFA(
         states={"0", "1"},
         input_symbols={"a", "b", "E"},
@@ -24,13 +23,28 @@ def construct_eventually_a_dfa():
 
 @pytest.fixture
 def construct_eventually_b_dfa():
-    # eventually B
     dfa = DFA(
         states={"0", "1"},
         input_symbols={"a", "b", "E"},
         transitions={
             "0": {"a": "0", "b": "1", "E": "0"},
             "1": {"a": "1", "b": "1", "E": "1"},
+        },
+        initial_state="0",
+        final_states={"1"},
+    )
+    return dfa
+
+
+@pytest.fixture
+def construct_not_a_until_b_dfa():
+    dfa = DFA(
+        states={"0", "1", "2"},
+        input_symbols={"a", "b", "E"},
+        transitions={
+            "0": {"a": "2", "b": "1", "E": "0"},
+            "1": {"a": "1", "b": "1", "E": "1"},
+            "2": {"a": "2", "b": "2", "E": "2"},
         },
         initial_state="0",
         final_states={"1"},
@@ -54,6 +68,12 @@ def get_wdfa_from_eventually_a_dfa(construct_eventually_a_dfa):
 @pytest.fixture
 def get_wdfa_from_eventually_b_dfa(construct_eventually_b_dfa):
     wdfa = get_wdfa_from_dfa(construct_eventually_b_dfa)
+    return wdfa
+
+
+@pytest.fixture
+def get_wdfa_from_not_a_until_b_dfa(construct_not_a_until_b_dfa):
+    wdfa = get_wdfa_from_dfa(construct_not_a_until_b_dfa)
     return wdfa
 
 

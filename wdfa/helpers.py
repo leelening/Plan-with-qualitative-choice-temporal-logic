@@ -89,12 +89,12 @@ def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
         if q != "sink":
             (q1, q2) = q
             if (
-                wdfa1.transition[q1]["end"] == "sink"
-                and wdfa2.transition[q1]["end"] == "sink"
+                wdfa1.transitions[q1]["end"] == "sink"
+                and wdfa2.transitions[q2]["end"] == "sink"
             ):
-                conj_wdfa.transition[q]["end"] = "sink"
+                conj_wdfa.transitions[q]["end"] = "sink"
 
-            elif (
+            if (
                 wdfa1.weight[q1, "end", "sink"] > 0
                 and wdfa2.weight[q2, "end", "sink"] > 0
             ):
@@ -123,7 +123,10 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
     try:
         assert wdfa1.input_symbols == wdfa2.input_symbols
     except AssertionError:
-        raise ValueError("The input labels of these two DFAs are different.")
+        new_input_symbols = wdfa2.input_symbols.union(wdfa1.input_symbols)
+    else:
+        new_input_symbols = wdfa2.input_symbols
+    new_input_symbols.remove("end")
 
     new_states = {
         (a, b)
@@ -132,8 +135,6 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
     }
 
     new_transitions = defaultdict(dict)
-    new_input_symbols = wdfa2.input_symbols
-    new_input_symbols.remove("end")
 
     for (state_a, transitions_a), symbol, (state_b, transitions_b) in product(
         wdfa1.transitions.items(), new_input_symbols, wdfa2.transitions.items()
