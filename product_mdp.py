@@ -9,7 +9,7 @@ __description__ = "This code defines a product Markov Decision Process"
 __status__ = "Production"
 
 from mdp import MDP
-from WDFA import *
+from wdfa.wdfa.wdfa import *
 import copy
 
 

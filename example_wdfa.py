@@ -7,7 +7,7 @@ __description__ = (
     "operations including: orderedOR, prioritized_conj, and prioritized_disj"
 )
 
-from WDFA import *
+from wdfa.wdfa.wdfa import *
 from utils import *
 
 

@@ -1,5 +1,5 @@
 import pytest
-from mdp.new_mdp import MDP
+from mdp import MDP
 import numpy as np
 from itertools import product
 from numpy.testing import assert_array_equal
