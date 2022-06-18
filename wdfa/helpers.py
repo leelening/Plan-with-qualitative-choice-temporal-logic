@@ -99,7 +99,8 @@ def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
                 and wdfa2.weight[q2, "end", "sink"] > 0
             ):
                 conj_wdfa.weight[q, "end", "sink"] = (
-                    wdfa1.weight[q1, "end", "sink"] * wdfa2.weight[q2, "end", "sink"]
+                    wdfa2.opt * (wdfa1.weight[q1, "end", "sink"] - 1)
+                    + wdfa2.weight[q2, "end", "sink"]
                 )
             elif (
                 wdfa1.weight[q1, "end", "sink"] == 0
