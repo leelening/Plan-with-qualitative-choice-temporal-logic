@@ -31,7 +31,10 @@ def test_neighbors(s, a, expected_neighbors):
 def test_obstacles_transitions():
     mdp = MDP(file_path=FILE)
     for s, a in product(mdp.obstacles, mdp.actlist):
-        assert mdp.transitions[s][a][s] == 1
+        if a != "aT":
+            assert mdp.transitions[s][a][s] == 1
+        else:
+            assert mdp.transitions[s][a]["sT"] == 1
 
 
 def test_transitions_sum_to_one():

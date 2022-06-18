@@ -24,17 +24,10 @@ class ProductMDP(MDP):
             self._wdfa.transitions[wdfa.initial_state][mdp.L[mdp.init]],
         )
         # construct the product MDP states, the sink states in the automaton will not be added.
-        states = {
-            (s, q)
-            for (s, q) in product(self._mdp.states, self._wdfa.states)
-        }
+        states = {(s, q) for (s, q) in product(self._mdp.states, self._wdfa.states)}
 
         # add a new action into the action list. Note: later a stop action will be added into the actlist.
         actlist = mdp.actlist
-
-        # adding a new action called "T" and the new state "T".
-        actlist.append("T")
-        states.add("T")
 
         prob, reward, actlist = self.initialize_transitions_reward(states, actlist)
 

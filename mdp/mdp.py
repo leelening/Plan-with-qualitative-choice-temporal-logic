@@ -28,9 +28,9 @@ class MDP(object):
 
             self.states = self.construct_states()
 
-            self.fill_labeling_func()
-
             self.transitions = self.construct_transitions()
+
+            self.fill_labeling_func()
 
             return
 
@@ -49,6 +49,8 @@ class MDP(object):
                 self.L[s] = "o"
             elif s not in labeled_states:
                 self.L[s] = "E"
+            elif s == "sT":
+                self.L[s] = "end"
 
     def a_array(self, a: int) -> np.array:
         """
@@ -106,6 +108,9 @@ class MDP(object):
         for s in self.states:
             transitions[s]["aT"]["sT"] = 1
 
+        self.states.append("sT")
+        self.actlist.append("aT")
+        self.AP["end"] = None
         return transitions
 
     def neighbors(self, s: tuple, a: int) -> set:
@@ -165,5 +170,6 @@ class MDP(object):
             ["S", self.states],
             ["A", self.actlist],
             ["P", self.transition_matrix_str(fmt)],
+            ["AP", self.AP],
         ]
         return tabulate(data, headers=["Variable", "Value"], tablefmt=fmt)
