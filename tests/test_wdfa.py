@@ -46,6 +46,10 @@ ORDERED_OR_TEST_CASE = (
         0,
     ),
     (("1", "1"), "end", "sink", 1),
+    (("0", "1"), "end", "sink", 2),
+    (("1", "0"), "end", "sink", 1),
+    ("sink", "end", "sink", 0),
+    ("sink", "a", "sink", 0),
 )
 
 
