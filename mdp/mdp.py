@@ -31,6 +31,7 @@ class MDP(object):
             self.fill_labeling_func()
 
             self.transitions = self.construct_transitions()
+
             return
 
     def construct_states(self) -> list:
@@ -98,6 +99,12 @@ class MDP(object):
                         transitions[s][a][ns] = self.randomness
                         sum_prob += self.randomness
                 transitions[s][a][n_d_s] = 1 - sum_prob
+
+        for a in self.actlist:
+            transitions["sT"][a]["sT"] = 1
+
+        for s in self.states:
+            transitions[s]["aT"]["sT"] = 1
 
         return transitions
 

@@ -1,6 +1,5 @@
 from itertools import product
-import copy
-
+from collections import defaultdict
 
 from mdp import MDP
 
@@ -28,11 +27,14 @@ class ProductMDP(MDP):
         states = {
             (s, q)
             for (s, q) in product(self._mdp.states, self._wdfa.states)
-            if q != "sink"
         }
 
         # add a new action into the action list. Note: later a stop action will be added into the actlist.
-        actlist = copy.deepcopy(mdp.actlist)
+        actlist = mdp.actlist
+
+        # adding a new action called "T" and the new state "T".
+        actlist.append("T")
+        states.add("T")
 
         prob, reward, actlist = self.initialize_transitions_reward(states, actlist)
 
@@ -68,9 +70,7 @@ class ProductMDP(MDP):
                 reward[(s, q), "stop"] = (
                     options - self._wdfa.weight[q, "end", "sink"] + 1
                 )
-        # adding a new action called "stop" and the new sink.
-        actlist.append("stop")
-        states.add("v_sink")
+
         for a in actlist:
             prob["v_sink"][a]["v_sink"] = 1
         return prob, reward, actlist
