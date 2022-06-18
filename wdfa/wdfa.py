@@ -164,5 +164,10 @@ class WDFA(DFA):
         self.opt = opt
 
     def __str__(self, fmt="presto"):
-        data = [["Q", self.states], ["AP", self.input_symbols], ["opt", self.opt]]
+        data = [
+            ["Q", self.states],
+            ["AP", self.input_symbols],
+            ["opt", self.opt],
+            ["weight", {k: v for k, v in self.weight.items() if v > 0}],
+        ]
         return tabulate(data, headers=["Variable", "Value"], tablefmt=fmt)

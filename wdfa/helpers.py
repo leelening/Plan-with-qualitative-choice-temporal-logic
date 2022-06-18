@@ -23,13 +23,15 @@ def get_wdfa_from_dfa(dfa: DFA) -> WDFA:
     wdfa.states.add("sink")
     wdfa.input_symbols.add("end")
     wdfa.transitions["sink"] = {a: "sink" for a in wdfa.input_symbols}
-    for a in wdfa.input_symbols:
-        wdfa.assign_weight("sink", a, "sink", 0)
+
+    for q, a, nq in product(wdfa.states, wdfa.input_symbols, wdfa.states):
+        wdfa.assign_weight(q, a, nq, 0)
 
     for q in wdfa.states:
         if q != "sink":
             wdfa.transitions[q]["end"] = "sink"
-        wdfa.assign_weight(q, "end", "sink", 1)
+        if q in dfa.final_states:
+            wdfa.assign_weight(q, "end", "sink", 1)
 
     wdfa.set_option(1)
     wdfa.validate()
@@ -67,12 +69,10 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
                     "sink",
                     wdfa2.weight[q2, "end", "sink"] + wdfa1.opt,
                 )
-
-            elif (
-                wdfa1.weight[q1, "end", "sink"] > 0
-                and wdfa2.weight[q2, "end", "sink"] == 0
-            ):
-                prod_wdfa.assign_weight(q, "end", "sink", wdfa1.opt)
+            elif wdfa1.weight[q1, "end", "sink"] > 0:
+                prod_wdfa.assign_weight(
+                    q, "end", "sink", wdfa1.weight[q1, "end", "sink"]
+                )
 
     prod_wdfa.set_option(wdfa1.opt + wdfa2.opt)
     prod_wdfa.validate()

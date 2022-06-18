@@ -3,7 +3,7 @@ import pytest
 from automata.fa.dfa import DFA
 from itertools import product
 
-from wdfa.helpers import get_wdfa_from_dfa
+from wdfa.helpers import get_wdfa_from_dfa, ordered_or
 
 dfa = DFA(
     states={"0", "1"},
@@ -17,9 +17,10 @@ dfa = DFA(
 )
 
 WEIGHT_TEST_CASE = (
-    (dfa, "0", "end", "sink", 1),
+    (dfa, "0", "end", "sink", 0),
     (dfa, "0", "a", "0", 0),
     (dfa, "1", "b", "1", 0),
+    (dfa, "1", "end", "sink", 1),
 )
 
 
@@ -35,6 +36,22 @@ def test_completeness():
         assert wdfa.transitions[q][a] in wdfa.states
 
 
+ORDERED_OR_TEST_CASE = (
+    (("0", "0"), "E", ("0", "0"), 0),
+    (
+        ("0", "0"),
+        "a",
+        ("1", "0"),
+        0,
+    ),
+    (("1", "1"), "end", "sink", 1),
+)
 
-# def test_ordered_or(get):
 
+@pytest.mark.parametrize("q, a, nq, w", ORDERED_OR_TEST_CASE)
+def test_ordered_or(
+    get_wdfa_from_eventually_a_dfa, get_wdfa_from_eventually_b_dfa, q, a, nq, w
+):
+    wdfa = ordered_or(get_wdfa_from_eventually_a_dfa, get_wdfa_from_eventually_b_dfa)
+    print(get_wdfa_from_eventually_a_dfa)
+    assert wdfa.weight[q, a, nq] == w
