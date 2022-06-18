@@ -127,14 +127,20 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
     new_states = {
         (a, b)
         for a, b in product(wdfa1.states, wdfa2.states)
-        if a != "sink" or b != "sink"
+        if ~(a == "sink" or b == "sink")
     }
 
     new_transitions = defaultdict(dict)
     for (state_a, transitions_a), symbol, (state_b, transitions_b) in product(
         wdfa1.transitions.items(), wdfa2.input_symbols, wdfa2.transitions.items()
     ):
-        if state_a != "sink" or state_b != "sink" or symbol != "end":
+        if ~(
+            state_a == "sink"
+            or state_b == "sink"
+            or symbol == "end"
+            or transitions_a[symbol] == "sink"
+            or transitions_b[symbol] == "sink"
+        ):
             new_transitions[state_a, state_b][symbol] = (
                 transitions_a[symbol],
                 transitions_b[symbol],

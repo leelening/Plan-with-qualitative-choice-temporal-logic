@@ -32,6 +32,8 @@ class WDFA(DFA):
             }
         else:
             self.weight = weight
+
+        self.opt = 1
         # call the super class's initialization. NOTE: it contains super class's validate function
         super(WDFA, self).__init__(
             states=states,
@@ -59,7 +61,7 @@ class WDFA(DFA):
         super(WDFA, self).validate()
 
         for q, a in product(self.states, self.input_symbols):
-            nq = self.get_transition(q, a)
+            nq = self.transitions[q][a]
             try:
                 assert nq is not None
                 assert (
@@ -158,6 +160,10 @@ class WDFA(DFA):
         return graph
 
     def set_option(self, opt=1):
+        # print(" ")
+        # print("*" * 10)
+        # print("set_option: {}".format(opt))
+        # print("*" * 10)
         self.opt = opt
 
     def get_option(self) -> int:
