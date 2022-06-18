@@ -33,3 +33,5 @@ L:
 AP: ["a", "b", "c", "E", "o"]
 
 randomness: 0.1
+
+gamma: 1

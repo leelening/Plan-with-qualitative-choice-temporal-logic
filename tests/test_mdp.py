@@ -6,13 +6,6 @@ from numpy.testing import assert_array_equal
 from mdp.mdp import MDP
 
 
-FILE = "/home/lening/Desktop/qualitative_choice_logic/environment/8 x 8/1.yaml"
-
-
-def test_mdp_constructor():
-    mdp = MDP(file_path=FILE)
-
-
 NEIGHBORS_TEST_CASES = (
     ((0, 7), 0, {(0, 7), (1, 7)}),
     ((1, 6), 1, {(2, 6), (1, 5), (1, 7)}),
@@ -22,14 +15,14 @@ NEIGHBORS_TEST_CASES = (
 
 
 @pytest.mark.parametrize("s, a, expected_neighbors", NEIGHBORS_TEST_CASES)
-def test_neighbors(s, a, expected_neighbors):
-    mdp = MDP(file_path=FILE)
+def test_neighbors(construct_mdp, s, a, expected_neighbors):
+    mdp = construct_mdp
     neighbors = mdp.neighbors(s, a)
     assert neighbors == expected_neighbors
 
 
-def test_obstacles_transitions():
-    mdp = MDP(file_path=FILE)
+def test_obstacles_transitions(construct_mdp):
+    mdp = construct_mdp
     for s, a in product(mdp.obstacles, mdp.actlist):
         if a != "aT":
             assert mdp.transitions[s][a][s] == 1
@@ -37,8 +30,8 @@ def test_obstacles_transitions():
             assert mdp.transitions[s][a]["sT"] == 1
 
 
-def test_transitions_sum_to_one():
-    mdp = MDP(file_path=FILE)
+def test_transitions_sum_to_one(construct_mdp):
+    mdp = construct_mdp
     for s in mdp.transitions:
         for a in mdp.transitions[s]:
             assert_array_equal(
@@ -50,8 +43,8 @@ DETERMINISTIC_TRANSITION_TEST_CASES = (((0, 7), 0, (0, 7)), ((0, 7), 1, (1, 7)))
 
 
 @pytest.mark.parametrize("s, a, ns", DETERMINISTIC_TRANSITION_TEST_CASES)
-def test_deterministic_transitions(s, a, ns):
-    mdp = MDP(file_path=FILE)
+def test_deterministic_transitions(construct_mdp, s, a, ns):
+    mdp = construct_mdp
     assert ns == mdp.deterministic_transition(s, a)
 
 
@@ -73,17 +66,17 @@ TRANSITION_TEST_CASES = (
 
 
 @pytest.mark.parametrize("s, a, ns, p", TRANSITION_TEST_CASES)
-def test_transition(s, a, ns, p):
-    mdp = MDP(file_path=FILE)
+def test_transition(construct_mdp, s, a, ns, p):
+    mdp = construct_mdp
     assert_array_equal(mdp.transitions[s][a][ns], p)
 
 
-def test_print():
-    mdp = MDP(file_path=FILE)
+def test_print(construct_mdp):
+    mdp = construct_mdp
     print(mdp)
 
 
-def test_labels():
-    mdp = MDP(file_path=FILE)
+def test_labels(construct_mdp):
+    mdp = construct_mdp
     for s in mdp.states:
         assert mdp.L[s] in mdp.AP
