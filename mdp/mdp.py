@@ -31,8 +31,9 @@ class MDP(object):
             self.transitions = self.construct_transitions()
 
             self.fill_labeling_func()
-
-            return
+        else:
+            for key in kwargs:
+                setattr(self, key, kwargs[key])
 
     def construct_states(self) -> list:
         return list(

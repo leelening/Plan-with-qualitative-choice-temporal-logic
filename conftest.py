@@ -3,6 +3,7 @@ from automata.fa.dfa import DFA
 
 from mdp.mdp import MDP
 from wdfa.helpers import get_wdfa_from_dfa
+from product_mdp.product_mdp import ProductMDP
 
 
 @pytest.fixture
@@ -54,3 +55,8 @@ def get_wdfa_from_eventually_a_dfa(construct_eventually_a_dfa):
 def get_wdfa_from_eventually_b_dfa(construct_eventually_b_dfa):
     wdfa = get_wdfa_from_dfa(construct_eventually_b_dfa)
     return wdfa
+
+
+@pytest.fixture
+def construct_product_mdp(construct_mdp, get_wdfa_from_eventually_a_dfa):
+    return ProductMDP(construct_mdp, get_wdfa_from_eventually_a_dfa)

@@ -1,3 +1,5 @@
+from hashlib import new
+from tkinter import W
 from automata.fa.dfa import DFA
 from collections import defaultdict
 from itertools import product
@@ -67,6 +69,7 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
                     "sink",
                     wdfa2.weight[q2, "end", "sink"] + wdfa1.opt,
                 )
+
             elif (
                 wdfa1.weight[q1, "end", "sink"] > 0
                 and wdfa2.weight[q2, "end", "sink"] == 0
@@ -93,14 +96,14 @@ def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
             ):
                 conj_wdfa.transition[q]["end"] = "sink"
 
-            if (
+            elif (
                 wdfa1.weight[q1, "end", "sink"] > 0
                 and wdfa2.weight[q2, "end", "sink"] > 0
             ):
                 conj_wdfa.weight[q, "end", "sink"] = (
                     wdfa1.weight[q1, "end", "sink"] * wdfa2.weight[q2, "end", "sink"]
                 )
-            if (
+            elif (
                 wdfa1.weight[q1, "end", "sink"] == 0
                 and wdfa2.weight[q2, "end", "sink"] == 0
             ):
@@ -127,14 +130,17 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
     new_states = {
         (a, b)
         for a, b in product(wdfa1.states, wdfa2.states)
-        if ~(a == "sink" or b == "sink")
+        if not (a == "sink" or b == "sink")
     }
 
     new_transitions = defaultdict(dict)
+    new_input_symbols = wdfa2.input_symbols
+    new_input_symbols.remove("end")
+
     for (state_a, transitions_a), symbol, (state_b, transitions_b) in product(
-        wdfa1.transitions.items(), wdfa2.input_symbols, wdfa2.transitions.items()
+        wdfa1.transitions.items(), new_input_symbols, wdfa2.transitions.items()
     ):
-        if ~(
+        if not (
             state_a == "sink"
             or state_b == "sink"
             or symbol == "end"
@@ -149,16 +155,19 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
 
     wdfa = WDFA(
         states=new_states,
-        input_symbols=wdfa1.input_symbols,
+        input_symbols=new_input_symbols,
         transitions=new_transitions,
         initial_state=new_initial_state,
         final_states=set(),
     )
     wdfa.states.add("sink")
     wdfa.input_symbols.add("end")
-    wdfa.transitions["sink"] = {a: "sink" for a in wdfa.input_symbols}
     for a in wdfa.input_symbols:
         wdfa.assign_weight("sink", a, "sink", 0)
+        wdfa.transitions["sink"][a] = "sink"
+    for q in wdfa.states:
+        wdfa.transitions[q]["end"] = "sink"
+        wdfa.assign_weight(q, "end", "sink", 0)
     return wdfa
 
 

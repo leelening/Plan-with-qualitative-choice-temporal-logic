@@ -2,6 +2,7 @@ from automata.fa.dfa import DFA
 from pydot import Dot, Edge, Node
 from itertools import product
 from collections import defaultdict
+from tabulate import tabulate
 
 
 class WDFA(DFA):
@@ -165,3 +166,7 @@ class WDFA(DFA):
         # print("set_option: {}".format(opt))
         # print("*" * 10)
         self.opt = opt
+
+    def __str__(self, fmt="presto"):
+        data = [["Q", self.states], ["AP", self.input_symbols]]
+        return tabulate(data, headers=["Variable", "Value"], tablefmt=fmt)

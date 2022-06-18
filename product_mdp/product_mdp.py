@@ -31,7 +31,7 @@ class ProductMDP(MDP):
             if q != "sink"
         }
 
-        prob = self.construct_transitions(states, mdp.actlist)
+        transitions = self.construct_transitions(states, mdp.actlist)
 
         reward = self.construct_rewards(states, mdp.actlist)
 
@@ -41,7 +41,7 @@ class ProductMDP(MDP):
             states=states,
             gamma=mdp.gamma,
             reward=reward,
-            prob=prob,
+            transitions=transitions,
             AP=mdp.AP,
             L=mdp.L,
         )

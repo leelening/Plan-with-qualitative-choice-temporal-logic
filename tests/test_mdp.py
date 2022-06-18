@@ -13,6 +13,24 @@ NEIGHBORS_TEST_CASES = (
     ((3, 4), 3, {(2, 4), (3, 3), (3, 5)}),
 )
 
+DETERMINISTIC_TRANSITION_TEST_CASES = (((0, 7), 0, (0, 7)), ((0, 7), 1, (1, 7)))
+
+TRANSITION_TEST_CASES = (
+    ((0, 7), 0, (0, 7), 0.9),
+    ((0, 7), 0, (1, 7), 0.1),
+    ((1, 6), 1, (2, 6), 0.8),
+    ((1, 6), 1, (1, 5), 0.1),
+    ((1, 6), 1, (1, 7), 0.1),
+    ((3, 4), 2, (3, 3), 0.8),
+    ((3, 4), 2, (4, 4), 0.1),
+    ((3, 4), 2, (2, 4), 0.1),
+    ((3, 4), 3, (2, 4), 0.8),
+    ((3, 4), 3, (3, 3), 0.1),
+    ((3, 4), 3, (3, 5), 0.1),
+    ("sT", 0, "sT", 1),
+    ((3, 4), "aT", "sT", 1),
+)
+
 
 @pytest.mark.parametrize("s, a, expected_neighbors", NEIGHBORS_TEST_CASES)
 def test_neighbors(construct_mdp, s, a, expected_neighbors):
@@ -39,30 +57,10 @@ def test_transitions_sum_to_one(construct_mdp):
             )
 
 
-DETERMINISTIC_TRANSITION_TEST_CASES = (((0, 7), 0, (0, 7)), ((0, 7), 1, (1, 7)))
-
-
 @pytest.mark.parametrize("s, a, ns", DETERMINISTIC_TRANSITION_TEST_CASES)
 def test_deterministic_transitions(construct_mdp, s, a, ns):
     mdp = construct_mdp
     assert ns == mdp.deterministic_transition(s, a)
-
-
-TRANSITION_TEST_CASES = (
-    ((0, 7), 0, (0, 7), 0.9),
-    ((0, 7), 0, (1, 7), 0.1),
-    ((1, 6), 1, (2, 6), 0.8),
-    ((1, 6), 1, (1, 5), 0.1),
-    ((1, 6), 1, (1, 7), 0.1),
-    ((3, 4), 2, (3, 3), 0.8),
-    ((3, 4), 2, (4, 4), 0.1),
-    ((3, 4), 2, (2, 4), 0.1),
-    ((3, 4), 3, (2, 4), 0.8),
-    ((3, 4), 3, (3, 3), 0.1),
-    ((3, 4), 3, (3, 5), 0.1),
-    ("sT", 0, "sT", 1),
-    ((3, 4), "aT", "sT", 1),
-)
 
 
 @pytest.mark.parametrize("s, a, ns, p", TRANSITION_TEST_CASES)

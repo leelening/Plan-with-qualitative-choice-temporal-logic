@@ -9,5 +9,6 @@ def test_set_options(get_wdfa_from_eventually_a_dfa):
 
 
 def test_sync(get_wdfa_from_eventually_a_dfa, get_wdfa_from_eventually_b_dfa):
-    sync_dfa = sync(get_wdfa_from_eventually_a_dfa, get_wdfa_from_eventually_b_dfa)
-    sync_dfa.validate()
+    sync_wdfa = sync(get_wdfa_from_eventually_a_dfa, get_wdfa_from_eventually_b_dfa)
+    print(sync_wdfa)
+    sync_wdfa.validate()
