@@ -154,3 +154,12 @@ class MDP(object):
                 for ns in self.transitions[s][a]:
                     data.append([s, a, ns, self.transitions[s][a][ns]])
         return tabulate(data, headers=["s", "a", "ns", "p"])
+
+    def __str__(self):
+        data = [
+            ["S", self.states],
+            ["A", self.actlist],
+            ["P"],
+            self.transition_matrix_str,
+        ]
+        return tabulate(data, headers=["Variable", "Value"])

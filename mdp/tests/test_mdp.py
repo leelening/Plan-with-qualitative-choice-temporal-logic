@@ -22,9 +22,7 @@ NEIGHBORS_TEST_CASES = (
 @pytest.mark.parametrize("s, a, expected_neighbors", NEIGHBORS_TEST_CASES)
 def test_neighbors(s, a, expected_neighbors):
     mdp = MDP(file_path=FILE)
-
     neighbors = mdp.neighbors(s, a)
-
     assert neighbors == expected_neighbors
 
 
@@ -71,3 +69,8 @@ TRANSITION_TEST_CASES = (
 def test_transition(s, a, ns, p):
     mdp = MDP(file_path=FILE)
     assert_array_equal(mdp.transitions[s][a][ns], p)
+
+
+def test_print():
+    mdp = MDP(file_path=FILE)
+    print(mdp)
