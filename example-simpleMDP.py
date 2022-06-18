@@ -6,10 +6,11 @@ from utils import *
 
 prefix = "./environment"
 #####
-file = "deterministic_gridworld_feasible_a"
+# file = "deterministic_gridworld_feasible_a"
 # file = "deterministic_gridworld_infeasible_a"
 # file = "stochastic_gridworld_feasible_a"
 # file = "stochastic_gridworld_infeasible_a"
+file = "deterministic_gridworld_abcd"
 
 # spec = "orderedDFA12"  # slide 3
 # spec = "orderedDFA31"  # slide 4
@@ -17,7 +18,8 @@ file = "deterministic_gridworld_feasible_a"
 # spec = "conj_wdfa31"  # slide 6
 # spec = "disj_wdfa31"  # slide 7
 # spec = "conj_wdfa3112"  # slide 8
-spec = "disj_wdfa3112"  # slid 9
+# spec = "disj_wdfa3112"  # slid 9
+spec = "conj_wdfa4512"
 
 file_path = prefix + "/{}.yaml".format(file)
 path = file + "_" + spec

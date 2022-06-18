@@ -377,7 +377,12 @@ def prioritized_conj(wdfa1, wdfa2) -> WDFA:
     """
     prioritized conjunction: wdfa1 is preferred to wdfa2.
     """
-    assert wdfa1.input_symbols == wdfa2.input_symbols
+    if wdfa1.input_symbols != wdfa2.input_symbols:
+        wdfa1.input_symbols.update(wdfa2.input_symbols)
+    diff = wdfa1.input_symbols - wdfa2.input_symbols
+    for q2 in wdfa2.transitions:
+        for a in diff:
+            wdfa2.transitions[q2][a] = q2
     # a list of product states without, (sink, x) or (x, sink) or (sink, sink), where x can be any state in Q.
     states = [
         (q1, q2)
