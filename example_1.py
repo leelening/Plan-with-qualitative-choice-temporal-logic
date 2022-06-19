@@ -63,10 +63,10 @@ evaluator7.evaluate()
 
 # compare
 df6 = pd.read_csv(
-    os.path.join(prefix, "{}_evaluation.tsv".format("F(a & F(b & F c))")), sep="\t"
+    os.path.join(prefix, "6", "{}_evaluation.tsv".format("F(a & F(b & F c))")), sep="\t"
 ).sort_values(by=["State"])
 
 df7 = pd.read_csv(
-    os.path.join(prefix, "{}_evaluation.tsv".format("F (a & F c) | F (b & F c)")),
+    os.path.join(prefix, "7", "{}_evaluation.tsv".format("F (a & F c) | F (b & F c)")),
     sep="\t",
 ).sort_values(by=["State"])

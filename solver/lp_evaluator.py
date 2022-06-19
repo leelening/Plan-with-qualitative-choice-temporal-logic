@@ -27,7 +27,6 @@ class LPEvaluator(LPSolver):
             mdp=mdp, max_gap=max_gap, max_seconds=max_seconds, path=path, disp=disp
         )
         self.read_policy(policy_path)
-        print(self.policy)
 
     def read_policy(self, policy_path: str):
         df = pd.read_csv(policy_path, sep="\t")
