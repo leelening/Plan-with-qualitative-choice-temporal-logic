@@ -8,7 +8,7 @@ wdfa6 = get_wdfa_from_dfa(DFA_6)
 wdfa7 = get_wdfa_from_dfa(DFA_7)
 
 
-wdfa = ordered_or(wdfa6, wdfa7)
+wdfa = ordered_or(wdfa6, wdfa7, path="example_1/example_1.png")
 
 
 mdp = MDP(

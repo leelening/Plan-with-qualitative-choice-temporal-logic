@@ -1,15 +1,38 @@
 from automata.fa.dfa import DFA
 from collections import defaultdict
 from itertools import product
-
+import os
 from wdfa.wdfa import WDFA
 
 
-def get_wdfa_from_dfa(dfa: DFA) -> WDFA:
+def get_save_path(save_dir: str, name: str) -> str:
+    """
+    Given directory to save in, and variable, construct a filepath. Type is json.
+    :param save_dir: directory to save in
+    :param name: the name of the file
+    :return: variable path
+    """
+    return os.path.join(save_dir, "{}.json".format(name))
+
+
+def check_dir(path: str) -> None:
+    """
+    if directory doesn't exist, creates it
+    :param path: directory path
+    """
+    if os.path.exists(path):
+        print("Warning, dir already exists, files may be overwritten.")
+    else:
+        print("Creating dir since it does not exist: {}".format(path))
+        os.makedirs(path)
+
+
+def get_wdfa_from_dfa(dfa: DFA, path: str = None) -> WDFA:
     """
     Return a wdfa from a given dfa
 
     :param dfa: given a dfa
+    :param path: the path to save the figure
     :return: the converted wdfa
     """
 
@@ -35,15 +58,18 @@ def get_wdfa_from_dfa(dfa: DFA) -> WDFA:
 
     wdfa.set_option(1)
     wdfa.validate()
+    if path:
+        wdfa.show_diagram(path)
     return wdfa
 
 
-def ordered_or(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
+def ordered_or(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
     """
     ordered OR Operator
 
     :param wdfa1: top priority given by wdfa1
     :param wdfa2: secondary outcome given by wdfa2
+    :param path: the path to save the figure
     :return: use automata product to construct the weighted automaton for ordered OR.
     """
     prod_wdfa = sync_or(wdfa1, wdfa2)
@@ -76,6 +102,8 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
 
     prod_wdfa.set_option(wdfa1.opt + wdfa2.opt)
     prod_wdfa.validate()
+    if path:
+        prod_wdfa.show_diagram(path)
     return prod_wdfa
 
 

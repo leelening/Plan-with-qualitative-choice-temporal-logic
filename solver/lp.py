@@ -1,6 +1,7 @@
 from mip import Model, minimize, xsum, OptimizationStatus
 from itertools import product
 from collections import defaultdict
+from wdfa.helpers import check_dir, get_save_path
 import numpy as np
 import os
 import json
@@ -48,28 +49,6 @@ class LPSolver(object):
         self.print_results(status)
 
     @staticmethod
-    def check_dir(path: str) -> None:
-        """
-        if directory doesn't exist, creates it
-        :param path: directory path
-        """
-        if os.path.exists(path):
-            print("Warning, dir already exists, files may be overwritten.")
-        else:
-            print("Creating dir since it does not exist: {}".format(path))
-            os.makedirs(path)
-
-    @staticmethod
-    def get_save_path(save_dir: str, name: str) -> str:
-        """
-        Given directory to save in, and variable, construct a filepath. Type is json.
-        :param save_dir: directory to save in
-        :param name: the name of the file
-        :return: variable path
-        """
-        return os.path.join(save_dir, "{}.json".format(name))
-
-    @staticmethod
     def pprint(res, name, fmt="presto") -> None:
         data = []
         for k, v in res.items():
@@ -101,7 +80,7 @@ class LPSolver(object):
                 self.pprint(self.policy, "action")
                 self.pprint(self.value, "value")
             if self.path:
-                self.check_dir(self.path)
+                check_dir(self.path)
                 self.save_policy_and_value()
 
     def save_policy_and_value(self) -> None:
@@ -110,9 +89,7 @@ class LPSolver(object):
         """
         for var in (self.policy, self.value):
             with open(
-                self.get_save_path(
-                    self.path, "policy" if var is self.policy else "value"
-                ),
+                get_save_path(self.path, "policy" if var is self.policy else "value"),
                 "w",
             ) as f:
                 json.dump(var, f, sort_keys=True, indent=4)
