@@ -5,6 +5,7 @@ from dfa.examples import DFA_1
 from solver.lp_solver import LPSolver
 from solver.lp_evaluator import LPEvaluator
 import os
+from numpy.testing import assert_almost_equal
 import pandas as pd
 
 prefix = "toy_example"
@@ -33,8 +34,11 @@ evaluator = LPEvaluator(
 
 evaluator.evaluate()
 
-df1 = pd.read_csv(os.path.join(prefix, "value.tsv"), sep="\t")
+df1 = pd.read_csv(os.path.join(prefix, "value.tsv"), sep="\t").sort_values(by=["State"])
 
-df2 = pd.read_csv(os.path.join(prefix, "{}_evaluation.tsv".format("F a")), sep="\t")
+df2 = pd.read_csv(
+    os.path.join(prefix, "{}_evaluation.tsv".format("F a")), sep="\t"
+).sort_values(by=["State"])
 
-df1.compare(df2)
+
+assert_almost_equal(df1["Value"].to_list(), df2["Value"].to_list())
