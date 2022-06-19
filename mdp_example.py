@@ -27,7 +27,7 @@ for a in mdp.actlist:
     for ns in mdp.transitions[1, 0][a]:
         mdp.transitions[1, 0][a][ns] = 0
 
-solver = LPSolver(mdp, path=prefix, print=False)
+solver = LPSolver(mdp, path=prefix, disp=False)
 
 solver.solve()
 

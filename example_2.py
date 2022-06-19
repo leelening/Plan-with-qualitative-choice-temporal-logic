@@ -23,6 +23,6 @@ mdp = MDP(
 product_mdp = ProductMDP(mdp, wdfa)
 
 
-solver = LPSolver(product_mdp, path=prefix, print=False)
+solver = LPSolver(product_mdp, path=prefix, disp=False)
 
 solver.solve()
