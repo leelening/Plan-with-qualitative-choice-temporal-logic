@@ -15,6 +15,7 @@ class Visualizer:
         pause_time: float = 2,
         window_title: str = "Grid world",
         surface_size: tuple = (800, 800),
+        draw=True,
     ) -> None:
         """
         Construct a visualizer of a trajectory
@@ -24,6 +25,7 @@ class Visualizer:
         :param pause_time: the time to pause between states, defaults to 2
         :param window_title: the tile of the window, defaults to "Grid world"
         :param surface_size: the size of the surface, defaults to (800, 800)
+        :param draw: wether to draw the surface, defaults to True
         """
         self.mdp = mdp
         self.trajectory = trajectory
@@ -31,6 +33,7 @@ class Visualizer:
 
         self.surface_size = surface_size
         self.window_title = window_title
+        self.draw = draw
 
     def visualize(self) -> None:
         """
@@ -49,9 +52,7 @@ class Visualizer:
             },
             start_coord=self.trajectory[0],
         )
-        board.draw()
 
-        pygame.display.update()
         for position in self.trajectory:
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -60,8 +61,8 @@ class Visualizer:
 
             board.step(position)
 
-            board.draw()
-
+            if self.draw:
+                board.draw()
             pygame.display.update()
 
             time.sleep(self.pause_time)
