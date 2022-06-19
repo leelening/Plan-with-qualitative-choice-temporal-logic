@@ -89,7 +89,7 @@ DFA_6 = DFA(
 
 # F (a & F c) | F (b & F c)
 DFA_7 = DFA(
-    state={"0", "1", "2"},
+    states={"0", "1", "2"},
     input_symbols={"a", "b", "E", "c", "o"},
     transitions={
         "0": {"a": "1", "b": "1", "E": "0", "c": "0", "o": "0"},
@@ -98,4 +98,29 @@ DFA_7 = DFA(
     },
     initial_state="0",
     final_states={"2"},
+)
+
+# F a | F c
+DFA_8 = DFA(
+    states={"0", "1"},
+    input_symbols={"a", "E", "c", "o"},
+    transitions={
+        "0": {"a": "1", "E": "0", "c": "1", "o": "0"},
+        "1": {"a": "1", "E": "1", "c": "1", "o": "1"},
+    },
+    initial_state="0",
+    final_states={"1"},
+)
+
+
+# F b | F c
+DFA_9 = DFA(
+    states={"0", "1"},
+    input_symbols={"b", "E", "c", "o"},
+    transitions={
+        "0": {"b": "1", "E": "0", "c": "1", "o": "0"},
+        "1": {"b": "1", "E": "1", "c": "1", "o": "1"},
+    },
+    initial_state="0",
+    final_states={"1"},
 )
