@@ -31,17 +31,15 @@ solver = LPSolver(mdp, path=prefix, print=False)
 
 solver.solve()
 
+
 res = np.zeros(solver.mdp.grid_world_size)
 for (x, y), v in solver.value.items():
     if isinstance(x, int) and isinstance(y, int):
         res[x][y] = v
 
 res = np.rot90(res)
-
 ax = sns.heatmap(res)
-# plt.yticks()[0] = 
-# reversed(plt.yticks()[0])
-yticks_pos = np.arange(0.5, 8.5,1)
+yticks_pos = np.arange(0.5, 8.5, 1)
 yticks_label = range(8)
 plt.yticks(yticks_pos, yticks_label[::-1])
 plt.show()

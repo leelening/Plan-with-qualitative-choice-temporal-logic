@@ -15,7 +15,7 @@ class LPSolver(object):
         max_gap: float = 1e-4,
         max_seconds: float = 300,
         path: str = None,
-        print: bool = False,
+        disp: bool = False,
     ):
         self.mdp = mdp
         self.max_gap = max_gap
@@ -28,7 +28,7 @@ class LPSolver(object):
         self.value = defaultdict(float)
 
         self.path = path
-        self.print = print
+        self.disp = disp
 
     def state_relevance_weights(self):
         return [1 / len(self.mdp.states)] * len(self.mdp.states)
@@ -64,7 +64,7 @@ class LPSolver(object):
 
     def print_results(self, status):
         if status == OptimizationStatus.OPTIMAL:
-            print("optimal solution cost {} found".format(self.m.objective_value))
+            ("optimal solution cost {} found".format(self.m.objective_value))
         elif status == OptimizationStatus.FEASIBLE:
             print(
                 "sol.cost {} found, best possible: {}".format(
@@ -83,7 +83,7 @@ class LPSolver(object):
         ):
             print("Extracting the policy...")
             self.extract_policy()
-            if self.print:
+            if self.disp:
                 self.pprint(self.policy, "action")
                 self.pprint(self.value, "value")
             if self.path:

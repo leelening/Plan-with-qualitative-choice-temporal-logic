@@ -3,13 +3,16 @@ from product_mdp.product_mdp import ProductMDP
 from mdp.mdp import MDP
 from dfa.examples import DFA_1
 from solver.lp_solver import LPSolver
+from solver.lp_evaluator import LPEvaluator
+import os
+import pandas as pd
 
 prefix = "toy_example"
 
 check_dir(prefix)
 
 
-wdfa = get_wdfa_from_dfa(DFA_1, path="{}/F a.png".format(prefix))
+wdfa = get_wdfa_from_dfa(DFA_1, path=prefix, name="F a")
 
 
 mdp = MDP(
@@ -19,6 +22,13 @@ mdp = MDP(
 product_mdp = ProductMDP(mdp, wdfa)
 
 
-solver = LPSolver(product_mdp, path=prefix, print=False)
+solver = LPSolver(product_mdp, path=prefix, disp=False)
 
 solver.solve()
+
+
+evaluator = LPEvaluator(
+    product_mdp, policy_path=os.path.join(prefix, "policy.tsv"), path=prefix
+)
+
+evaluator.evaluate()
