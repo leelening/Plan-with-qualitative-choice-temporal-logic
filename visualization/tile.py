@@ -26,7 +26,7 @@ class Tile:
         surface: pygame.Surface,
         tile_size: tuple = (100, 100),
         text: str = None,
-    ):
+    ) -> None:
         """
         Construct a tile
 

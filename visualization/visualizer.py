@@ -15,7 +15,7 @@ class Visualizer:
         pause_time: float = 2,
         window_title: str = "Grid world",
         surface_size: tuple = (800, 800),
-    ):
+    ) -> None:
         """
         Construct a visualizer of a trajectory
 
@@ -32,7 +32,7 @@ class Visualizer:
         self.surface_size = surface_size
         self.window_title = window_title
 
-    def visualize(self):
+    def visualize(self) -> None:
         """
         Start the visualization
         """
@@ -47,6 +47,7 @@ class Visualizer:
             sub_goals_coords={
                 k: v for k, v in self.mdp.L.items() if v in {"a", "b", "c"}
             },
+            start_coord=self.trajectory[0],
         )
         board.draw()
 

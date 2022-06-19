@@ -14,6 +14,7 @@ class GridWorld:
         board_size: list,
         obs_coords: list,
         sub_goals_coords: dict,
+        start_coord: list,
     ):
         """
         Initialize a grid world
@@ -22,6 +23,7 @@ class GridWorld:
         :param board_size: the size of the board
         :param obs_coords: the coordinates of the obstacles
         :param sub_goals_coords: the coordinates of the sub goals
+        :param start_coord: the coordinates of the start position
         """
         self.surface = surface
         self.bgColor = pygame.Color("black")
@@ -30,6 +32,7 @@ class GridWorld:
 
         self.sub_goals_coords = sub_goals_coords
 
+        self.start_coord = list(start_coord)
         self.position = list(start_coord)
 
         self.calc_obs_coords()
@@ -37,24 +40,37 @@ class GridWorld:
         self.create_tile()
 
     def calc_obs_coords(self):
+        """
+        Calculate the obstacles coordinates
+        """
         self.board_obs_coords = [
             [x, self.board_size[1] - y - 1] for x, y in self.obs_coords
         ]
 
     def calc_sub_goals_coords(self):
+        """
+        Calculate the sub goals coordinates
+        """
         self.board_sub_goals_coords = {
             v: [x, self.board_size[1] - y - 1]
             for (x, y), v in self.sub_goals_coords.items()
         }
 
-    def find_board_coords(self, pos):
+    def find_board_coords(self, pos: list) -> list:
+        """
+        Find the board coordinates given the position
+
+        :param pos: the current position
+        :return: the board coordinates
+        """
         if pos is not None:
             return [pos[0], self.board_size[1] - pos[1] - 1]
         return None
 
     def create_tile(self):
-        # Create the Tiles
-        # - self is the Grid_World game
+        """
+        Create the Tiles
+        """
         self.board = []
         for rowIndex in range(0, self.board_size[0]):
             row = []
@@ -79,9 +95,10 @@ class GridWorld:
                 row.append(tile)
             self.board.append(row)
 
-    def draw(self):
-        # Draw the tiles.
-        # - self is the Grid_World game
+    def draw(self) -> None:
+        """
+        Draw the tiles.
+        """
         pos = self.find_board_coords(self.position)
 
         self.surface.fill(self.bgColor)
@@ -92,5 +109,10 @@ class GridWorld:
     def step(
         self,
         position: list,
-    ):
+    ) -> None:
+        """
+        update the current position
+
+        :param position: the current position
+        """
         self.position = list(position)
