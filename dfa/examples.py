@@ -86,3 +86,16 @@ DFA_6 = DFA(
     initial_state="0",
     final_states={"3"},
 )
+
+# F (a & F c) | F (b & F c)
+DFA_7 = DFA(
+    state={"0", "1", "2"},
+    input_symbols={"a", "b", "E", "c", "o"},
+    transitions={
+        "0": {"a": "1", "b": "1", "E": "0", "c": "0", "o": "0"},
+        "1": {"a": "1", "b": "1", "E": "1", "c": "2", "o": "1"},
+        "2": {"a": "2", "b": "2", "E": "2", "c": "2", "o": "2"},
+    },
+    initial_state="0",
+    final_states={"2"},
+)
