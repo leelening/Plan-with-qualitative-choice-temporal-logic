@@ -10,15 +10,19 @@ class GridWorld:
 
     def __init__(
         self,
-        surface,
-        board_size,
-        obs_coords,
-        sub_goals_coords,
-        start_coord,
+        surface: pygame.Surface,
+        board_size: list,
+        obs_coords: list,
+        sub_goals_coords: dict,
     ):
-        # Intialize a Grid_World game.
-        # - surface is the pygame.Surface of the window
+        """
+        Initialize a grid world
 
+        :param surface: the surface to draw on
+        :param board_size: the size of the board
+        :param obs_coords: the coordinates of the obstacles
+        :param sub_goals_coords: the coordinates of the sub goals
+        """
         self.surface = surface
         self.bgColor = pygame.Color("black")
         self.board_size = list(board_size)
@@ -26,7 +30,6 @@ class GridWorld:
 
         self.sub_goals_coords = sub_goals_coords
 
-        self.start_coord = list(start_coord)
         self.position = list(start_coord)
 
         self.calc_obs_coords()

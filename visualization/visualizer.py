@@ -47,7 +47,6 @@ class Visualizer:
             sub_goals_coords={
                 k: v for k, v in self.mdp.L.items() if v in {"a", "b", "c"}
             },
-            start_coord=self.trajectory[0],
         )
         board.draw()
 
