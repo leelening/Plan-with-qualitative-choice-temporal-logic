@@ -18,7 +18,7 @@ DFA_2 = DFA(
     input_symbols={"a", "b", "E", "o"},
     transitions={
         "0": {"a": "0", "b": "1", "E": "0", "o": "0"},
-        "1": {"a": "1", "b": "1", "E": "1", "o": "0"},
+        "1": {"a": "1", "b": "1", "E": "1", "o": "1"},
     },
     initial_state="0",
     final_states={"1"},
