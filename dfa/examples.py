@@ -3,10 +3,10 @@ from automata.fa.dfa import DFA
 # F a
 DFA_1 = DFA(
     states={"0", "1"},
-    input_symbols={"a", "b", "E"},
+    input_symbols={"a", "b", "E", "o", "c"},
     transitions={
-        "0": {"a": "1", "b": "0", "E": "0"},
-        "1": {"a": "1", "b": "1", "E": "1"},
+        "0": {"a": "1", "b": "0", "E": "0", "o": "0", "c": "0"},
+        "1": {"a": "1", "b": "1", "E": "1", "o": "1", "c": "1"},
     },
     initial_state="0",
     final_states={"1"},

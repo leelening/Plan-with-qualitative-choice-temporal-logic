@@ -24,10 +24,14 @@ TEST_CASE = (
     (((1, 0), "0"), "aT", "sT", 1),
     (((2, 0), "0"), "aT", "sT", 1),
     (((1, 3), "0"), "aT", "sT", 1),
+    (((1, 1), "0"), 0, ((1, 2), "0"), 0.8),
 )
 
 
 @pytest.mark.parametrize("s, a, ns, p", TEST_CASE)
 def test_product_mdp_transition_matrix(construct_product_mdp, s, a, ns, p):
     product_mdp = construct_product_mdp
-    assert_array_equal(product_mdp.transitions[s][a][ns], p)
+    try:
+        assert_array_equal(product_mdp.transitions[s][a][ns], p)
+    except Exception:
+        raise ValueError(product_mdp.transitions[s][a])

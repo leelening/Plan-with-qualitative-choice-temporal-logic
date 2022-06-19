@@ -67,11 +67,8 @@ class ProductMDP(MDP):
 
         for v, a, nv in product(states, actlist, states):
             if not (v == "sT" or a == "aT" or nv == "sT"):
-                try:
-                    (s, q), (ns, nq) = v, nv
-                except ValueError:
-                    raise ValueError(v, a, nv, states)
-                if nq in self._mdp.transitions[s][a]:
+                (s, q), (ns, nq) = v, nv
+                if ns in self._mdp.transitions[s][a]:
                     transitions[s, q][a][ns, nq] = self._mdp.transitions[s][a][ns] * (
                         nq == self._wdfa.transitions[q][self._mdp.L[ns]]
                     )
