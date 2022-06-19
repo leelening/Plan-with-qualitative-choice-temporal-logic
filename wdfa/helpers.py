@@ -157,6 +157,11 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
         new_input_symbols = wdfa2.input_symbols
     new_input_symbols.remove("end")
 
+    for wdfa in (wdfa1, wdfa2):
+        for q, a in product(wdfa.states, new_input_symbols):
+            if a not in wdfa.input_symbols:
+                wdfa.transitions[q][a] = q
+
     new_states = {
         (a, b)
         for a, b in product(wdfa1.states, wdfa2.states)
@@ -168,12 +173,16 @@ def sync(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
     for (state_a, transitions_a), symbol, (state_b, transitions_b) in product(
         wdfa1.transitions.items(), new_input_symbols, wdfa2.transitions.items()
     ):
-        if not (
-            state_a == "sink"
-            or state_b == "sink"
-            or symbol == "end"
-            or transitions_a[symbol] == "sink"
-            or transitions_b[symbol] == "sink"
+        if (
+            symbol in transitions_a
+            and symbol in transitions_b
+            and not (
+                state_a == "sink"
+                or state_b == "sink"
+                or symbol == "end"
+                or transitions_a[symbol] == "sink"
+                or transitions_b[symbol] == "sink"
+            )
         ):
             new_transitions[state_a, state_b][symbol] = (
                 transitions_a[symbol],

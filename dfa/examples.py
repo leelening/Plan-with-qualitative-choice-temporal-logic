@@ -15,10 +15,10 @@ DFA_1 = DFA(
 # F b
 DFA_2 = DFA(
     states={"0", "1"},
-    input_symbols={"a", "b", "E"},
+    input_symbols={"a", "b", "E", "o"},
     transitions={
-        "0": {"a": "0", "b": "1", "E": "0"},
-        "1": {"a": "1", "b": "1", "E": "1"},
+        "0": {"a": "0", "b": "1", "E": "0", "o": "0"},
+        "1": {"a": "1", "b": "1", "E": "1", "o": "0"},
     },
     initial_state="0",
     final_states={"1"},
@@ -103,10 +103,10 @@ DFA_7 = DFA(
 # F a | F c
 DFA_8 = DFA(
     states={"0", "1"},
-    input_symbols={"a", "E", "c", "o"},
+    input_symbols={"a", "E", "c", "o", "b"},
     transitions={
-        "0": {"a": "1", "E": "0", "c": "1", "o": "0"},
-        "1": {"a": "1", "E": "1", "c": "1", "o": "1"},
+        "0": {"a": "1", "E": "0", "c": "1", "o": "0", "b": "0"},
+        "1": {"a": "1", "E": "1", "c": "1", "o": "1", "b": "1"},
     },
     initial_state="0",
     final_states={"1"},
