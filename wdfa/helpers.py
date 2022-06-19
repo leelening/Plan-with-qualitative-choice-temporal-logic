@@ -27,12 +27,13 @@ def check_dir(path: str) -> None:
         os.makedirs(path)
 
 
-def get_wdfa_from_dfa(dfa: DFA, path: str = None) -> WDFA:
+def get_wdfa_from_dfa(dfa: DFA, path: str = None, name: str = None) -> WDFA:
     """
     Return a wdfa from a given dfa
 
     :param dfa: given a dfa
     :param path: the path to save the figure
+    :param name: name of the wdfa, defaults to None
     :return: the converted wdfa
     """
 
@@ -42,6 +43,7 @@ def get_wdfa_from_dfa(dfa: DFA, path: str = None) -> WDFA:
         dfa.transitions,
         dfa.initial_state,
         dfa.final_states,
+        name=name,
     )
     wdfa.states.add("sink")
     wdfa.input_symbols.add("end")
@@ -59,17 +61,18 @@ def get_wdfa_from_dfa(dfa: DFA, path: str = None) -> WDFA:
     wdfa.set_option(1)
     wdfa.validate()
     if path:
-        wdfa.show_diagram(path)
+        wdfa.show_diagram(os.path.join(path, name + ".png"))
     return wdfa
 
 
-def ordered_or(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
+def ordered_or(wdfa1: WDFA, wdfa2: WDFA, path: str = None, name: str = None) -> WDFA:
     """
     ordered OR Operator
 
     :param wdfa1: top priority given by wdfa1
     :param wdfa2: secondary outcome given by wdfa2
     :param path: the path to save the figure, defaults to None
+    :param name: name of the wdfa, defaults to None
     :return: use automata product to construct the weighted automaton for ordered OR.
     """
     prod_wdfa = sync_or(wdfa1, wdfa2)
@@ -100,20 +103,24 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
                     q, "end", "sink", wdfa1.weight[q1, "end", "sink"]
                 )
 
+    prod_wdfa.name = name
     prod_wdfa.set_option(wdfa1.opt + wdfa2.opt)
     prod_wdfa.validate()
     if path:
-        prod_wdfa.show_diagram(path)
+        prod_wdfa.show_diagram(os.path.join(path, name + ".png"))
     return prod_wdfa
 
 
-def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
+def prioritized_conj(
+    wdfa1: WDFA, wdfa2: WDFA, path: str = None, name: str = None
+) -> WDFA:
     """
     prioritized conjunction: wdfa1 is preferred to wdfa2.
 
     :param wdfa1: top priority given by wdfa1
     :param wdfa2: secondary outcome given by wdfa2
     :param path: the path to save the figure, defaults to None
+    :param name: name of the wdfa, defaults to None
     :return: use automata product to construct the weighted automaton for prioritized conjunction.
     """
     conj_wdfa = sync_conj(wdfa1, wdfa2)
@@ -141,9 +148,10 @@ def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
             ):
                 conj_wdfa.weight[q, "end", "sink"] = 0
 
+    conj_wdfa.name = name
     conj_wdfa.validate()
     if path:
-        conj_wdfa.show_diagram(path)
+        conj_wdfa.show_diagram(os.path.join(path, name + ".png"))
     return conj_wdfa
 
 

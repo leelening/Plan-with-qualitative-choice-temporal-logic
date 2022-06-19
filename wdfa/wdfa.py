@@ -26,6 +26,7 @@ class WDFA(DFA):
         initial_state,
         final_states,
         weight=None,
+        name=None,
     ) -> None:
         if weight is None:
             self.weight = {
@@ -35,6 +36,7 @@ class WDFA(DFA):
             self.weight = weight
 
         self.opt = 1
+        self.name = name
         # call the super class's initialization. NOTE: it contains super class's validate function
         super(WDFA, self).__init__(
             states=states,
@@ -153,7 +155,11 @@ class WDFA(DFA):
                     Edge(
                         nodes[str(from_state)],
                         nodes[str(to_state)],
-                        label="{}: {}".format(to_label, weight) if weight else to_label,
+                        label="{}: [weight: {}, reward: {}]".format(
+                            to_label, weight, self.opt - weight + 1
+                        )
+                        if weight
+                        else to_label,
                     )
                 )
         if path:

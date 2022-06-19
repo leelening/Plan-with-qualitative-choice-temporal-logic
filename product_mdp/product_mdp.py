@@ -25,12 +25,12 @@ class ProductMDP(MDP):
             self._wdfa.transitions[wdfa.initial_state][mdp.L[mdp.init]],
         )
 
-        states = {
+        states = [
             (s, q)
             for (s, q) in product(self._mdp.states, self._wdfa.states)
             if q != "sink"
-        }
-        states.update({"sT"})
+        ]
+        states.append("sT")
 
         transitions = self.construct_transitions(states, mdp.actlist)
 

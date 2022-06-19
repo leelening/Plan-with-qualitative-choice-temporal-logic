@@ -2,7 +2,7 @@ from wdfa.helpers import get_wdfa_from_dfa, ordered_or, check_dir
 from product_mdp.product_mdp import ProductMDP
 from mdp.mdp import MDP
 from dfa.examples import DFA_2, DFA_8
-from solver.lp import LPSolver
+from solver.lp_solver import LPSolver
 
 prefix = "example_2"
 

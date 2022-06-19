@@ -1,6 +1,6 @@
 import pytest
 
-from solver.lp import LPSolver
+from solver.lp_solver import LPSolver
 
 LP_TEST_CASE_1 = (((4, 1), 2), ((1, 2), 2), ((5, 4), 2), ((2, 1), 2))
 
