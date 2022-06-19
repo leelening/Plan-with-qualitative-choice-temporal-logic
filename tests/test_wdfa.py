@@ -34,5 +34,3 @@ def test_completeness():
     wdfa = get_wdfa_from_dfa(dfa)
     for q, a in product(wdfa.states, wdfa.input_symbols):
         assert wdfa.transitions[q][a] in wdfa.states
-
-

@@ -25,9 +25,9 @@ init: !!python/tuple [6, 6]
 
 L:
   {
-    !!python/tuple [2, 1]: "c",
-    !!python/tuple [1, 5]: "a",
-    !!python/tuple [5, 4]: "b",
+    !!python/tuple [1, 0]: "c",
+    !!python/tuple [1, 6]: "a",
+    !!python/tuple [4, 4]: "b",
   }
 
 AP: ["a", "b", "c", "E", "o"]
