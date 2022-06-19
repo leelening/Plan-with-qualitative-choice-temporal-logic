@@ -5,7 +5,7 @@ from dfa.examples import DFA_6, DFA_7
 from solver.lp_solver import LPSolver
 from solver.lp_evaluator import LPEvaluator
 import os
-import pandas as pd
+from utils import plot_heatmap, return_error_on_initial_states
 
 prefix = "example_1"
 
@@ -41,7 +41,6 @@ product_mdp6 = ProductMDP(mdp, wdfa6)
 
 solver6 = LPSolver(product_mdp6, path=os.path.join(prefix, "6"), disp=False)
 solver6.solve()
-
 evaluator6 = LPEvaluator(
     product_mdp6,
     policy_path=os.path.join(prefix, "6", "policy.tsv"),
@@ -50,7 +49,6 @@ evaluator6 = LPEvaluator(
 evaluator6.evaluate()
 
 product_mdp7 = ProductMDP(mdp, wdfa7)
-
 solver7 = LPSolver(product_mdp7, path=os.path.join(prefix, "7"), disp=False)
 solver7.solve()
 
@@ -61,12 +59,6 @@ evaluator7 = LPEvaluator(
 )
 evaluator7.evaluate()
 
-# compare
-df6 = pd.read_csv(
-    os.path.join(prefix, "6", "{}_evaluation.tsv".format("F(a & F(b & F c))")), sep="\t"
-).sort_values(by=["State"])
-
-df7 = pd.read_csv(
-    os.path.join(prefix, "7", "{}_evaluation.tsv".format("F (a & F c) | F (b & F c)")),
-    sep="\t",
-).sort_values(by=["State"])
+error = return_error_on_initial_states(evaluator6, evaluator7)
+print(error)
+plot_heatmap(mdp.grid_world_size, error)
