@@ -107,9 +107,14 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
     return prod_wdfa
 
 
-def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
+def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA, path: str) -> WDFA:
     """
     prioritized conjunction: wdfa1 is preferred to wdfa2.
+
+    :param wdfa1: top priority given by wdfa1
+    :param wdfa2: secondary outcome given by wdfa2
+    :param path: the path to save the figure
+    :return: use automata product to construct the weighted automaton for prioritized conjunction.
     """
     conj_wdfa = sync_conj(wdfa1, wdfa2)
 
@@ -137,6 +142,8 @@ def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA) -> WDFA:
                 conj_wdfa.weight[q, "end", "sink"] = 0
 
     conj_wdfa.validate()
+    if path:
+        conj_wdfa.show_diagram(path)
     return conj_wdfa
 
 
