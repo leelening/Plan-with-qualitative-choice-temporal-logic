@@ -44,7 +44,7 @@ solver6.solve()
 
 evaluator6 = LPEvaluator(
     product_mdp6,
-    policy_path=os.path.join(prefix, "policy.tsv"),
+    policy_path=os.path.join(prefix, "6", "policy.tsv"),
     path=os.path.join(prefix, "6"),
 )
 evaluator6.evaluate()
@@ -56,7 +56,7 @@ solver7.solve()
 
 evaluator7 = LPEvaluator(
     ProductMDP(mdp, wdfa7),
-    policy_path=os.path.join(prefix, "policy.tsv"),
+    policy_path=os.path.join(prefix, "7", "policy.tsv"),
     path=os.path.join(prefix, "7"),
 )
 evaluator7.evaluate()
