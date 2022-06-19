@@ -173,4 +173,6 @@ class MDP(object):
             ["P", self.transition_matrix_str(fmt)],
             ["AP", self.AP],
         ]
+        if hasattr(self, "reward"):
+            data.append(["r", self.reward])
         return tabulate(data, headers=["Variable", "Value"], tablefmt=fmt)
