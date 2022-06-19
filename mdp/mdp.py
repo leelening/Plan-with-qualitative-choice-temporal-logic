@@ -90,11 +90,15 @@ class MDP(object):
         transitions = defaultdict(lambda: defaultdict(dict))
 
         for s, a in product(self.states, self.actlist):
+            n_d_s = self.deterministic_transition(s, a)
             if s in self.obstacles:
-                transitions[s][a][s] = 1
+                if n_d_s == s:
+                    transitions[s][a][s] = 1
+                else:
+                    transitions[s][a][s] = self.stuck_prob
+                    transitions[s][a][n_d_s] = 1 - self.stuck_prob
             else:
                 neighbors = self.neighbors(s, a)
-                n_d_s = self.deterministic_transition(s, a)
 
                 sum_prob = 0
                 for ns in neighbors:

@@ -43,7 +43,12 @@ def test_obstacles_transitions(construct_mdp):
     mdp = construct_mdp
     for s, a in product(mdp.obstacles, mdp.actlist):
         if a != "aT":
-            assert mdp.transitions[s][a][s] == 1
+            n_d_s = mdp.deterministic_transition(s, a)
+            if n_d_s == s:
+                assert mdp.transitions[s][a][s] == 1
+            else:
+                assert mdp.transitions[s][a][s] == mdp.stuck_prob
+                assert mdp.transitions[s][a][n_d_s] == 1 - mdp.stuck_prob
         else:
             assert mdp.transitions[s][a]["sT"] == 1
 
