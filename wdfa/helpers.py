@@ -7,12 +7,12 @@ from wdfa.wdfa import WDFA
 
 def get_save_path(save_dir: str, name: str) -> str:
     """
-    Given directory to save in, and variable, construct a filepath. Type is json.
+    Given directory to save in, and variable, construct a filepath. Type is tsv.
     :param save_dir: directory to save in
     :param name: the name of the file
     :return: variable path
     """
-    return os.path.join(save_dir, "{}.json".format(name))
+    return os.path.join(save_dir, "{}.tsv".format(name))
 
 
 def check_dir(path: str) -> None:
@@ -69,7 +69,7 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
 
     :param wdfa1: top priority given by wdfa1
     :param wdfa2: secondary outcome given by wdfa2
-    :param path: the path to save the figure
+    :param path: the path to save the figure, defaults to None
     :return: use automata product to construct the weighted automaton for ordered OR.
     """
     prod_wdfa = sync_or(wdfa1, wdfa2)
@@ -107,13 +107,13 @@ def ordered_or(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
     return prod_wdfa
 
 
-def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA, path: str) -> WDFA:
+def prioritized_conj(wdfa1: WDFA, wdfa2: WDFA, path: str = None) -> WDFA:
     """
     prioritized conjunction: wdfa1 is preferred to wdfa2.
 
     :param wdfa1: top priority given by wdfa1
     :param wdfa2: secondary outcome given by wdfa2
-    :param path: the path to save the figure
+    :param path: the path to save the figure, defaults to None
     :return: use automata product to construct the weighted automaton for prioritized conjunction.
     """
     conj_wdfa = sync_conj(wdfa1, wdfa2)

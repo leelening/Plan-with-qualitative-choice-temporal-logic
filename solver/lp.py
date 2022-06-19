@@ -6,6 +6,7 @@ import numpy as np
 import os
 import json
 from tabulate import tabulate
+import pandas as pd
 
 
 class LPSolver(object):
@@ -88,11 +89,8 @@ class LPSolver(object):
         Save the policy and value
         """
         for var in (self.policy, self.value):
-            with open(
-                get_save_path(self.path, "policy" if var is self.policy else "value"),
-                "w",
-            ) as f:
-                json.dump(var, f, sort_keys=True, indent=4)
+            df = pd.DataFrame(var.items(), columns=["State", "Value" if var is self.value else "Action"])
+            df.to_csv(get_save_path(self.path, "value" if var is self.value else "policy"), sep="\t")
 
     def extract_policy(self):
         for _, state in enumerate(self.mdp.states):
@@ -109,5 +107,5 @@ class LPSolver(object):
                 for action in self.mdp.actlist
             ]
             opt_a = self.mdp.actlist[np.argmax(q)]
-            self.policy[str(state)] = opt_a
-            self.value[str(state)] = np.max(q)
+            self.policy[state] = opt_a
+            self.value[state] = np.max(q)

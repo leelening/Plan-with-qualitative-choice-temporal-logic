@@ -14,6 +14,7 @@ def test_lp_1(construct_mdp_with_reward_1, s, a):
     lp_solver.solve()
 
     assert lp_solver.policy[s] == a
+    assert lp_solver.value[s] > 0
 
 
 @pytest.mark.parametrize("s, a", LP_TEST_CASE_2)
@@ -23,3 +24,4 @@ def test_lp_2(construct_mdp_with_reward_2, s, a):
     lp_solver.solve()
 
     assert lp_solver.policy[s] == a
+    assert lp_solver.value[s] > 0

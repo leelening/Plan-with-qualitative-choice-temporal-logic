@@ -33,6 +33,6 @@ L:
 AP: ["a", "b", "c", "E", "o"]
 
 randomness: 0.1
-stuck_prob: 0.9
+stuck_prob: 1
 
-gamma: 1
+gamma: 0.9
