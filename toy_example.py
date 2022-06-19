@@ -32,3 +32,9 @@ evaluator = LPEvaluator(
 )
 
 evaluator.evaluate()
+
+df1 = pd.read_csv(os.path.join(prefix, "value.tsv"), sep="\t")
+
+df2 = pd.read_csv(os.path.join(prefix, "{}_evaluation.tsv".format("F a")), sep="\t")
+
+df1.compare(df2)
