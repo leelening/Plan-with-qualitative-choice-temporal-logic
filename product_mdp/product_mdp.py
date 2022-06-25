@@ -32,13 +32,13 @@ class ProductMDP(MDP):
         ]
         states.append("sT")
 
-        transitions = self.construct_transitions(states, mdp.actlist)
+        transitions = self.construct_transitions(states, mdp.actions)
 
-        reward = self.construct_rewards(states, mdp.actlist)
+        reward = self.construct_rewards(states, mdp.actions)
 
         super(ProductMDP, self).__init__(
             init=init,
-            actlist=mdp.actlist,
+            actions=mdp.actions,
             states=states,
             gamma=mdp.gamma,
             reward=reward,
@@ -47,9 +47,9 @@ class ProductMDP(MDP):
             L=mdp.L,
         )
 
-    def construct_rewards(self, states: list, actlist: list) -> defaultdict:
+    def construct_rewards(self, states: list, actions: list) -> defaultdict:
         reward = defaultdict(float)
-        for v, a in product(states, actlist):
+        for v, a in product(states, actions):
             if v != "sT":
                 (s, q) = v
                 if (
@@ -62,10 +62,10 @@ class ProductMDP(MDP):
                     )
         return reward
 
-    def construct_transitions(self, states: list, actlist: list) -> defaultdict:
+    def construct_transitions(self, states: list, actions: list) -> defaultdict:
         transitions = defaultdict(lambda: defaultdict(dict))
 
-        for v, a, nv in product(states, actlist, states):
+        for v, a, nv in product(states, actions, states):
             if not (v == "sT" or a == "aT" or nv == "sT"):
                 (s, q), (ns, nq) = v, nv
                 if ns in self._mdp.transitions[s][a]:

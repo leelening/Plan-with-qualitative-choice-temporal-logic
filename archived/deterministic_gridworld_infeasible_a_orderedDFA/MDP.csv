@@ -16,7 +16,7 @@
  13: 'E',
  14: 'E',
  15: 'E'}"
-2,actlist,"[0, 1, 2, 3]"
+2,actions,"[0, 1, 2, 3]"
 3,gamma,0.9
 4,init,1
 5,name,'infeasible_a'

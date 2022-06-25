@@ -63,7 +63,7 @@ def construct_mdp_with_reward_1(construct_mdp):
     mdp.reward[(0, 0), 1] = 1
     mdp.gamma = 0.9
 
-    for a in mdp.actlist:
+    for a in mdp.actions:
         for ns in mdp.transitions[1, 0][a]:
             mdp.transitions[1, 0][a][ns] = 0
     return mdp
@@ -79,7 +79,7 @@ def construct_mdp_with_reward_2(construct_mdp):
     mdp.reward[(1, 9), 2] = 1
     mdp.gamma = 0.9
 
-    for a in mdp.actlist:
+    for a in mdp.actions:
         for ns in mdp.transitions[1, 6][a]:
             mdp.transitions[1, 6][a][ns] = 0
     return mdp

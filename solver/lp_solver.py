@@ -41,7 +41,7 @@ class LPSolver(object):
             xsum(c[i] * self.v[i] for i, _ in enumerate(self.mdp.states))
         )
 
-        for (i, state), action in product(enumerate(self.mdp.states), self.mdp.actlist):
+        for (i, state), action in product(enumerate(self.mdp.states), self.mdp.actions):
             self.m += self.v[i] >= self.mdp.reward[
                 state, action
             ] + self.mdp.gamma * xsum(
@@ -116,8 +116,8 @@ class LPSolver(object):
                         if next_state in self.mdp.transitions[state][action]
                     ]
                 )
-                for action in self.mdp.actlist
+                for action in self.mdp.actions
             ]
-            opt_a = self.mdp.actlist[np.argmax(q)]
+            opt_a = self.mdp.actions[np.argmax(q)]
             self.policy[state] = opt_a
             self.value[state] = np.max(q)

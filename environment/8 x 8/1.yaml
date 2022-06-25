@@ -1,6 +1,6 @@
 name: "1"
 grid_world_size: [8, 8]
-actlist: [0, 1, 2, 3]
+actions: [0, 1, 2, 3]
 obstacles:
   [
     !!python/tuple [0, 3],

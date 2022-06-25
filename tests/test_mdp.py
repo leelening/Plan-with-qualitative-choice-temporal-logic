@@ -42,7 +42,7 @@ def test_neighbors(construct_mdp, s, a, expected_neighbors):
 
 def test_obstacles_transitions(construct_mdp):
     mdp = construct_mdp
-    for s, a in product(mdp.obstacles, mdp.actlist):
+    for s, a in product(mdp.obstacles, mdp.actions):
         if a != "aT":
             n_d_s = mdp.deterministic_transition(s, a)
             if n_d_s == s:
@@ -103,5 +103,5 @@ def test_deterministic_transition(construct_mdp, s, a, n_d_s):
 
 def test_stochastic_transitions(construct_mdp):
     mdp = construct_mdp
-    for s, a in product(mdp.states, mdp.actlist):
+    for s, a in product(mdp.states, mdp.actions):
         assert mdp.stochastic_transition(s, a) in list(mdp.transitions[s][a].keys())

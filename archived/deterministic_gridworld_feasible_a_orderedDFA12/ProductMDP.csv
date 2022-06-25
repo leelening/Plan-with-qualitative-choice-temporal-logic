@@ -18,7 +18,7 @@
  15: 'E'}"
 2,_mdp,<mdp.MDP object at 0x7f551316ddc0>
 3,_wdfa,<WDFA.WDFA object at 0x7f550da27cd0>
-4,actlist,"[0, 1, 2, 3, 'stop']"
+4,actions,"[0, 1, 2, 3, 'stop']"
 5,gamma,0.99
 6,init,"(1, ('0', '0'))"
 7,obstacles,[]

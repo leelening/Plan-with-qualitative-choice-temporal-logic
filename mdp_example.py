@@ -21,7 +21,7 @@ mdp.reward[(1, 1), 2] = 1
 mdp.reward[(0, 0), 1] = 1
 mdp.gamma = 0.9
 
-for a in mdp.actlist:
+for a in mdp.actions:
     for ns in mdp.transitions[1, 0][a]:
         mdp.transitions[1, 0][a][ns] = 0
 

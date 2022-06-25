@@ -45,7 +45,7 @@ class LPEvaluator(LPSolver):
             xsum(c[i] * self.v[i] for i, _ in enumerate(self.mdp.states))
         )
 
-        for (i, state), action in product(enumerate(self.mdp.states), self.mdp.actlist):
+        for (i, state), action in product(enumerate(self.mdp.states), self.mdp.actions):
             if action == self.policy[state]:
                 self.m += self.v[i] >= self.mdp.reward[
                     state, action

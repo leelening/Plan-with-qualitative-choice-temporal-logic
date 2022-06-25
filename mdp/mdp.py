@@ -114,7 +114,7 @@ class MDP(object):
         """
         transitions = defaultdict(lambda: defaultdict(dict))
 
-        for s, a in product(self.states, self.actlist):
+        for s, a in product(self.states, self.actions):
             n_d_s = self.deterministic_transition(s, a)
             if s in self.obstacles:
                 if n_d_s == s:
@@ -133,9 +133,9 @@ class MDP(object):
                 transitions[s][a][n_d_s] = 1 - sum_prob
 
         self.states.append("sT")
-        self.actlist.append("aT")
+        self.actions.append("aT")
 
-        for a in self.actlist:
+        for a in self.actions:
             transitions["sT"][a]["sT"] = 1
 
         for s in self.states:
@@ -199,7 +199,7 @@ class MDP(object):
     def __str__(self, fmt="presto"):
         data = [
             ["S", self.states],
-            ["A", self.actlist],
+            ["A", self.actions],
             ["P", self.transition_matrix_str(fmt)],
             ["AP", self.AP],
         ]

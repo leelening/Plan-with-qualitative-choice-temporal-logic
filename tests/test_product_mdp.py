@@ -6,7 +6,7 @@ import pytest
 def test_product_mdp_transition(construct_product_mdp):
     product_mdp = construct_product_mdp
     assert "sT" in product_mdp.states and "sT" in product_mdp.transitions
-    assert "aT" in product_mdp.actlist
+    assert "aT" in product_mdp.actions
     for s in product_mdp.transitions:
         assert "aT" in product_mdp.transitions[s]
         for a in product_mdp.transitions[s]:
