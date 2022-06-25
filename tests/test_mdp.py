@@ -84,3 +84,24 @@ def test_labels(construct_mdp):
     mdp = construct_mdp
     for s in mdp.states:
         assert mdp.L[s] in mdp.AP
+
+
+TEST_CASE_DETERMINISTIC_TRANSITION = (
+    ((4, 3), 1, (4, 3)),
+    ((4, 4), 0, (4, 5)),
+    ((6, 5), 1, (7, 5)),
+    ((6, 5), 2, (6, 4)),
+    ((6, 5), 3, (5, 5)),
+)
+
+
+@pytest.mark.parametrize("s, a, n_d_s", TEST_CASE_DETERMINISTIC_TRANSITION)
+def test_deterministic_transition(construct_mdp, s, a, n_d_s):
+    mdp = construct_mdp
+    assert mdp.deterministic_transition(s, a) == n_d_s
+
+
+def test_stochastic_transitions(construct_mdp):
+    mdp = construct_mdp
+    for s, a in product(mdp.states, mdp.actlist):
+        assert mdp.stochastic_transition(s, a) in list(mdp.transitions[s][a].keys())

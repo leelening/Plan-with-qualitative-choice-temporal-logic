@@ -76,8 +76,33 @@ class MDP(object):
         :param a: the current action
         :return: the next deterministic state
         """
+        if hasattr(self, "obstacles") and s in self.obstacles and a != "aT":
+            return s
         ns = tuple(np.asarray(s) + self.a_array(a))
         return ns if ns in self.states else s
+
+    def stochastic_transition(self, s: tuple, a: int) -> tuple:
+        """
+        One step stochastic transition
+
+        :param s: the current state
+        :type s: tuple
+        :param a: the current state
+        :type a: int
+        :return: the next deterministic state
+        """
+        if hasattr(self, "obstacles") and s in self.obstacles and a != "aT":
+            return s
+        next_possible_states = list(self.transitions[s][a].keys())
+
+        probability_distribution = [
+            self.transitions[s][a][ns] for ns in next_possible_states
+        ]
+
+        index = np.random.choice(
+            a=range(len(next_possible_states)), p=probability_distribution
+        )
+        return next_possible_states[index]
 
     def construct_transitions(
         self,
@@ -107,14 +132,15 @@ class MDP(object):
                         sum_prob += self.randomness
                 transitions[s][a][n_d_s] = 1 - sum_prob
 
+        self.states.append("sT")
+        self.actlist.append("aT")
+
         for a in self.actlist:
             transitions["sT"][a]["sT"] = 1
 
         for s in self.states:
             transitions[s]["aT"]["sT"] = 1
 
-        self.states.append("sT")
-        self.actlist.append("aT")
         self.AP.append("end")
         return transitions
 
