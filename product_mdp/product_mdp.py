@@ -30,7 +30,6 @@ class ProductMDP(MDP):
             for (s, q) in product(self._mdp.states, self._wdfa.states)
             if q != "sink"
         ]
-        states.append("sT")
 
         transitions = self.construct_transitions(states, mdp.actions)
 
@@ -50,32 +49,25 @@ class ProductMDP(MDP):
     def construct_rewards(self, states: list, actions: list) -> defaultdict:
         reward = defaultdict(float)
         for v, a in product(states, actions):
-            if v != "sT":
-                (s, q) = v
-                if (
-                    (a == "aT")
-                    and (q != "sink")
-                    and (self._wdfa.weight[q, "end", "sink"] > 0)
-                ):
-                    reward[(s, q), a] = (
-                        self._wdfa.opt - self._wdfa.weight[q, "end", "sink"] + 1
-                    )
+            (s, q) = v
+            if (
+                (a == "aT")
+                and (q != "sink")
+                and (self._wdfa.weight[q, "end", "sink"] > 0)
+            ):
+                reward[(s, q), a] = (
+                    self._wdfa.opt - self._wdfa.weight[q, "end", "sink"] + 1
+                )
         return reward
 
     def construct_transitions(self, states: list, actions: list) -> defaultdict:
         transitions = defaultdict(lambda: defaultdict(dict))
 
         for v, a, nv in product(states, actions, states):
-            if not (v == "sT" or a == "aT" or nv == "sT"):
-                (s, q), (ns, nq) = v, nv
-                if ns in self._mdp.transitions[s][a]:
-                    transitions[s, q][a][ns, nq] = self._mdp.transitions[s][a][ns] * (
-                        nq == self._wdfa.transitions[q][self._mdp.L[ns]]
-                    )
-            if v == "sT":
-                transitions[v][a][v] = 1
-
-            if a == "aT":
-                transitions[v]["aT"]["sT"] = 1
+            (s, q), (ns, nq) = v, nv
+            if ns in self._mdp.transitions[s][a]:
+                transitions[s, q][a][ns, nq] = self._mdp.transitions[s][a][ns] * (
+                    nq == self._wdfa.transitions[q][self._mdp.L[ns]]
+                )
 
         return transitions

@@ -18,10 +18,24 @@ class Simulator(object):
     def simulate_mdp(self):
         s = self.mdp.init
         while not (
-            (s == "sink")
-            or (s is self.mdp.obstacles)
+            (s == "sT")
+            or (s in self.mdp.obstacles)
             or (self.target and s == self.target)
         ):
             self.visualizable_trajectory.append(s)
             s = self.mdp.stochastic_transition(s, self.policy[s])
-        self.visualizable_trajectory.append(s)
+
+        if s != "sT":
+            self.visualizable_trajectory.append(s)
+
+    def simulate_product_mdp(self):
+        s = self.mdp.init
+        while not (
+            (s[0] == "sT")
+            or (s[0] in self.mdp._mdp.obstacles)
+            or (self.target and s == self.target)
+        ):
+            self.visualizable_trajectory.append(s[0])
+            s = self.mdp.stochastic_transition(s, self.policy[s])
+        if s[0] != "sT":
+            self.visualizable_trajectory.append(s[0])

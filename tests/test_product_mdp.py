@@ -5,7 +5,6 @@ import pytest
 
 def test_product_mdp_transition(construct_product_mdp):
     product_mdp = construct_product_mdp
-    assert "sT" in product_mdp.states and "sT" in product_mdp.transitions
     assert "aT" in product_mdp.actions
     for s in product_mdp.transitions:
         assert "aT" in product_mdp.transitions[s]
@@ -21,9 +20,9 @@ def test_product_mdp_transition(construct_product_mdp):
 
 
 TEST_CASE = (
-    (((1, 0), "0"), "aT", "sT", 1),
-    (((2, 0), "0"), "aT", "sT", 1),
-    (((1, 3), "0"), "aT", "sT", 1),
+    (((1, 0), "0"), "aT", ("sT", "0"), 1),
+    (((2, 0), "0"), "aT", ("sT", "0"), 1),
+    (((1, 3), "0"), "aT", ("sT", "0"), 1),
     (((1, 1), "0"), 0, ((1, 2), "0"), 0.8),
 )
 
