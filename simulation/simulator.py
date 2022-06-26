@@ -25,6 +25,8 @@ class Simulator(object):
         else run simulation_product_mdp
         """
         if hasattr(self.mdp, "_wdfa"):
+            if self.target:
+                raise ValueError("Should not set a target for the product MDP!")
             self.simulate_product_mdp()
         else:
             if not self.target:
