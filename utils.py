@@ -45,3 +45,10 @@ def read_policy(policy_path: str):
             int(row["Action"]) if row["Action"] != "aT" else row["Action"]
         )
     return policy
+
+
+def save_trajectories(sampled_trajectories, prefix):
+    with open("{}/trajectories.txt".format(prefix), "w") as f:
+        for trajectory in sampled_trajectories:
+            line = ", ".join(str(x) for x in trajectory)
+            f.write("[" + line + "]\n")

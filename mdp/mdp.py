@@ -101,9 +101,14 @@ class MDP(object):
             self.transitions[s][a][ns] for ns in next_possible_states
         ]
 
-        index = np.random.choice(
-            a=range(len(next_possible_states)), p=probability_distribution
-        )
+        try:
+            index = np.random.choice(
+                a=range(len(next_possible_states)), p=probability_distribution
+            )
+        except:
+            raise ValueError(
+                "s: {}, a: {}, P: {}".format(s, a, probability_distribution)
+            )
         return next_possible_states[index]
 
     def construct_transitions(
