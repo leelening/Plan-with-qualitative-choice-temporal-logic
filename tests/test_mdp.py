@@ -26,6 +26,9 @@ TRANSITION_TEST_CASES = (
     ((3, 4), 3, (3, 3), 0.1),
     ((3, 4), 3, (3, 5), 0.1),
     ("sT", 0, "sT", 1),
+    ("sT", 1, "sT", 1),
+    ("sT", 2, "sT", 1),
+    ("sT", 3, "sT", 1),
     ((3, 4), "aT", "sT", 1),
     ((6, 2), "aT", "sT", 1),
 )
@@ -103,3 +106,17 @@ def test_stochastic_transitions(construct_mdp):
     mdp = construct_mdp
     for s, a in product(mdp.states, mdp.actions):
         assert mdp.stochastic_transition(s, a) in list(mdp.transitions[s][a].keys())
+
+
+TEST_CASE_LABELING_FUNCTION = {
+    ((1, 0), "c"),
+    ((1, 6), "a"),
+    ((4, 4), "b"),
+    ("sT", "end"),
+}
+
+
+@pytest.mark.parametrize("ns, labels", TEST_CASE_LABELING_FUNCTION)
+def test_labeling_function(construct_mdp, ns, labels):
+    mdp = construct_mdp
+    assert mdp.L[ns] == labels

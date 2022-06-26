@@ -1,5 +1,4 @@
 import pytest
-from automata.fa.dfa import DFA
 from collections import defaultdict
 
 from mdp.mdp import MDP

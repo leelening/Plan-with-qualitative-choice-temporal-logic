@@ -31,6 +31,7 @@ class MDP(object):
             self.transitions = self.construct_transitions()
 
             self.fill_labeling_func()
+
         else:
             for key in kwargs:
                 setattr(self, key, kwargs[key])
@@ -44,13 +45,14 @@ class MDP(object):
         """
         Fullfil the labeling function
         """
+        self.AP.append("end")
         labeled_states = self.L.keys()
         for s in self.states:
             if s in self.obstacles:
                 self.L[s] = "o"
             elif s not in labeled_states:
                 self.L[s] = "E"
-            elif s == "sT":
+            if s == "sT":
                 self.L[s] = "end"
 
     def a_array(self, a: int) -> np.array:
@@ -141,7 +143,6 @@ class MDP(object):
         for s in self.states:
             transitions[s]["aT"]["sT"] = 1
 
-        self.AP.append("end")
         return transitions
 
     def neighbors(self, s: tuple, a: int) -> set:
