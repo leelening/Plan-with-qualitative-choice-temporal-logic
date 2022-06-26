@@ -4,12 +4,7 @@ from wdfa.helpers import ordered_or, prioritized_conj
 
 ORDERED_OR_TEST_CASE_SIMPLE = (
     (("0", "0"), "E", ("0", "0"), 0),
-    (
-        ("0", "0"),
-        "a",
-        ("1", "0"),
-        0,
-    ),
+    (("0", "0"), "a", ("1", "0"), 0),
     (("1", "1"), "end", "sink", 1),
     (("0", "1"), "end", "sink", 2),
     (("1", "0"), "end", "sink", 1),

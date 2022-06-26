@@ -6,6 +6,7 @@ from mdp.mdp import MDP
 from wdfa.helpers import get_wdfa_from_dfa
 from product_mdp.product_mdp import ProductMDP
 from dfa.examples import *
+from utils import read_policy
 
 
 @pytest.fixture
@@ -28,6 +29,20 @@ def construct_not_a_until_b_dfa():
 def construct_mdp():
     return MDP(
         file_path="/home/lening/Desktop/qualitative_choice_logic/environment/8 x 8/1.yaml"
+    )
+
+
+@pytest.fixture
+def mdp_policy():
+    return read_policy(
+        "/home/lening/Desktop/qualitative_choice_logic/mdp_example/policy.tsv"
+    )
+
+
+@pytest.fixture
+def product_mdp_policy():
+    return read_policy(
+        "/home/lening/Desktop/qualitative_choice_logic/toy_example/policy.tsv"
     )
 
 
