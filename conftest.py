@@ -15,7 +15,6 @@ def construct_eventually_a_dfa():
 
 @pytest.fixture
 def construct_eventually_b_dfa():
-
     return DFA_2
 
 
@@ -30,6 +29,11 @@ def construct_mdp():
         file_path="/home/lening/Desktop/qualitative_choice_logic/environment/8 x 8/1.yaml"
     )
 
+@pytest.fixture
+def construct_a_inaccessiable_mdp():
+    return MDP(
+        file_path="/home/lening/Desktop/qualitative_choice_logic/environment/8 x 8/2.yaml"
+    )
 
 @pytest.fixture
 def mdp_policy():

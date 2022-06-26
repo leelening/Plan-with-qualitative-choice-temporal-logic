@@ -7,6 +7,7 @@ from solver.lp_evaluator import LPEvaluator
 import os
 from utils import plot_heatmap, return_error_on_initial_states
 from simulation.simulator import Simulator
+from utils import save_trajectories
 
 prefix = "example_1"
 
@@ -60,12 +61,17 @@ evaluator7 = LPEvaluator(
 )
 evaluator7.evaluate()
 
+value = {s[0]: solver.value[s] for s in product_mdp.states if s[-1] == ("0", "0")}
+
+print(value)
+plot_heatmap(mdp.grid_world_size, value)
+
 error = return_error_on_initial_states(evaluator6, evaluator7)
 print(error)
 plot_heatmap(mdp.grid_world_size, error)
 
 
-simulator = Simulator(mdp=product_mdp, policy=solver.policy, target=(1, 0))
+simulator = Simulator(mdp=product_mdp, policy=solver.policy)
 
 sampled_trajectories = simulator.sample_trajectories(10)
 

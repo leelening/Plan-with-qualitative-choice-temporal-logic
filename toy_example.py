@@ -1,3 +1,4 @@
+from re import I
 from wdfa.helpers import get_wdfa_from_dfa, check_dir
 from product_mdp.product_mdp import ProductMDP
 from mdp.mdp import MDP
@@ -7,6 +8,8 @@ from solver.lp_evaluator import LPEvaluator
 import os
 from numpy.testing import assert_almost_equal
 import pandas as pd
+from utils import save_trajectories
+from simulation.simulator import Simulator
 
 prefix = "toy_example"
 
@@ -42,3 +45,9 @@ df2 = pd.read_csv(
 
 
 assert_almost_equal(df1["Value"].to_list(), df2["Value"].to_list())
+
+simulator = Simulator(mdp=product_mdp, policy=solver.policy)
+
+sampled_trajectories = simulator.sample_trajectories(10)
+
+save_trajectories(sampled_trajectories=sampled_trajectories, prefix=prefix)
