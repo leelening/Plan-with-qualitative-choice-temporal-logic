@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from itertools import product
+import pandas as pd
 
 
 def plot_heatmap(size: list, value: dict):
@@ -29,3 +30,18 @@ def return_error_on_initial_states(evaluator1, evaluator2):
         ):
             error[k1[0]] = evaluator1.value[k1] - evaluator2.value[k2]
     return error
+
+
+def preprocess(row):
+    return eval(row["State"]) if row["State"] != "sT" else row["State"]
+
+
+def read_policy(policy_path: str):
+    df = pd.read_csv(policy_path, sep="\t")
+    df["State"] = df.apply(preprocess, axis=1)
+    policy = {}
+    for _, row in df.iterrows():
+        policy[row["State"]] = (
+            int(row["Action"]) if row["Action"] != "aT" else row["Action"]
+        )
+    return policy

@@ -3,8 +3,6 @@ import numpy as np
 from itertools import product
 from numpy.testing import assert_array_equal
 
-from mdp.mdp import MDP
-
 
 NEIGHBORS_TEST_CASES = (
     ((0, 7), 0, {(0, 7), (1, 7)}),
