@@ -3,6 +3,7 @@ import numpy as np
 import seaborn as sns
 from itertools import product
 import pandas as pd
+from pandas import Series
 
 
 def plot_heatmap(size: list, value: dict):
@@ -32,7 +33,7 @@ def return_error_on_initial_states(evaluator1, evaluator2):
     return error
 
 
-def preprocess(row):
+def preprocess(row: Series):
     return eval(row["State"]) if row["State"] != "sT" else row["State"]
 
 
@@ -47,7 +48,7 @@ def read_policy(policy_path: str):
     return policy
 
 
-def save_trajectories(sampled_trajectories, prefix):
+def save_trajectories(sampled_trajectories: list, prefix: str):
     with open("{}/trajectories.txt".format(prefix), "w") as f:
         for trajectory in sampled_trajectories:
             line = ", ".join(str(x) for x in trajectory)
