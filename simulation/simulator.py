@@ -3,6 +3,14 @@ from mdp.mdp import MDP
 
 class Simulator(object):
     def __init__(self, mdp: MDP, policy: dict, target=None) -> None:
+        """
+        Initialize a simulator for the MDP
+
+        :param mdp: MDP or product mdp
+        :param policy: the policy
+        :type policy: dict
+        :param target: the target of the MDP, defaults to None
+        """
         self.mdp = mdp
         self.target = target
         self.policy = policy
