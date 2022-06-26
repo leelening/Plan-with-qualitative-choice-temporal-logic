@@ -18,6 +18,9 @@ class Simulator(object):
         self.visualizable_trajectory = []
 
     def simulate(self):
+        """
+        If the mdp is pure mdp, then run simulate_mdp, else run simulation_product_mdp
+        """
         if hasattr(self.mdp, "_wdfa"):
             self.simulate_product_mdp()
         else:
