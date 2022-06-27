@@ -120,3 +120,32 @@ TEST_CASE_LABELING_FUNCTION = {
 def test_labeling_function(construct_mdp, ns, labels):
     mdp = construct_mdp
     assert mdp.L[ns] == labels
+
+
+P = 0.3
+ADJUSTED_TRANSITION_TEST_CASES = (
+    ((0, 7), 0, (0, 7), 1 - P),
+    ((0, 7), 0, (1, 7), P),
+    ((1, 6), 1, (2, 6), 1 - 2 * P),
+    ((1, 6), 1, (1, 5), P),
+    ((1, 6), 1, (1, 7), P),
+    ((3, 4), 2, (3, 3), 1 - 2 * P),
+    ((3, 4), 2, (4, 4), P),
+    ((3, 4), 2, (2, 4), P),
+    ((3, 4), 3, (2, 4), 1 - 2 * P),
+    ((3, 4), 3, (3, 3), P),
+    ((3, 4), 3, (3, 5), P),
+    ("sT", 0, "sT", 1),
+    ("sT", 1, "sT", 1),
+    ("sT", 2, "sT", 1),
+    ("sT", 3, "sT", 1),
+    ((3, 4), "aT", "sT", 1),
+    ((6, 2), "aT", "sT", 1),
+)
+
+
+@pytest.mark.parametrize("s, a, ns, p", ADJUSTED_TRANSITION_TEST_CASES)
+def test_adjusted_transition(construct_mdp, s, a, ns, p):
+    mdp = construct_mdp
+    mdp.adjust_randomness(P)
+    assert_array_equal(mdp.transitions[s][a][ns], p)

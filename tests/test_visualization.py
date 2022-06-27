@@ -14,7 +14,7 @@ def test_visualize_trajectory(construct_a_inaccessiable_mdp):
     visualizer = Visualizer(
         mdp=construct_a_inaccessiable_mdp,
         trajectory=trajectory,
-        pause_time=6,
-        draw=True,
+        pause_time=0,
+        draw=False,
     )
     visualizer.visualize()

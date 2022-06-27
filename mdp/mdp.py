@@ -138,9 +138,10 @@ class MDP(object):
                         transitions[s][a][ns] = self.randomness
                         sum_prob += self.randomness
                 transitions[s][a][n_d_s] = 1 - sum_prob
-
-        self.states.append("sT")
-        self.actions.append("aT")
+        if "sT" not in self.states:
+            self.states.append("sT")
+        if "aT" not in self.actions:
+            self.actions.append("aT")
 
         for a in self.actions:
             transitions["sT"][a]["sT"] = 1
@@ -201,6 +202,17 @@ class MDP(object):
                 for ns in self.transitions[s][a]:
                     data.append([s, a, ns, self.transitions[s][a][ns]])
         return tabulate(data, headers=["s", "a", "ns", "p"], tablefmt=fmt)
+
+    def adjust_randomness(self, randomness: float) -> None:
+        """
+        Adjust the randomness of the MDP givne the randomness
+
+        :param randomness: the randomness in the transition probablity
+        """
+        self.randomness = randomness
+        self.states.remove("sT")
+        self.actions.remove("aT")
+        self.transitions = self.construct_transitions()
 
     def __str__(self, fmt="presto"):
         data = [
