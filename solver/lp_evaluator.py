@@ -9,7 +9,6 @@ import ast
 from utils import read_policy
 
 
-
 class LPEvaluator(LPSolver):
     def __init__(
         self,
@@ -20,13 +19,19 @@ class LPEvaluator(LPSolver):
         path: str = None,
         disp: bool = False,
     ) -> None:
-
         super(LPEvaluator, self).__init__(
             mdp=mdp, max_gap=max_gap, max_seconds=max_seconds, path=path, disp=disp
         )
         self.policy = read_policy(policy_path)
 
+    def set_policy(self, policy: dict) -> None:
+        """
+        Set the policy of the LPEvaluator
 
+        :param policy: the policy
+
+        """
+        self.policy = policy
 
     def evaluate(self):
         c = self.state_relevance_weights()
