@@ -4,6 +4,9 @@ import seaborn as sns
 from itertools import product
 import pandas as pd
 from pandas import Series
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from matplotlib import rcParams
 
 
 def plot_heatmap(size: list, value: dict):
@@ -17,6 +20,44 @@ def plot_heatmap(size: list, value: dict):
     yticks_pos = np.arange(0.5, size[1] + 0.5, 1)
     yticks_label = range(size[1])
     plt.yticks(yticks_pos, yticks_label[::-1])
+    plt.show()
+
+
+def plot_value_surf(size: list, value: dict, zlimit=None, title=None):
+    plt.style.use("seaborn-dark")
+    fig = plt.figure(figsize=(8, 8))
+
+    ax = fig.gca(projection="3d")
+    if title:
+        fig.canvas.set_window_title(title)
+
+    Z1 = np.zeros(size)
+
+    X_VAL = np.arange(0, size[0], 1)
+    Y_VAL = np.arange(0, size[1], 1)
+
+    X1, Y1 = np.meshgrid(X_VAL, Y_VAL, sparse=False, indexing="ij")
+
+    for (i, j) in product(X_VAL, Y_VAL):
+        Z1[i][j] = value[i, j]
+
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    ax.set_zlabel("Value")
+
+    surf = ax.plot_surface(X1, Y1, Z1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+
+    # Customize the z axis.
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+    if zlimit:
+        ax.set_zlim(0, zlimit)
+
+    # Add a color bar which maps values to colors.
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    ax.dist = 12
+
     plt.show()
 
 
@@ -53,3 +94,13 @@ def save_trajectories(sampled_trajectories: list, prefix: str):
         for trajectory in sampled_trajectories:
             line = ", ".join(str(x) for x in trajectory)
             f.write("[" + line + "]\n")
+
+
+def from_prob_to_cost(value: dict, weight: float, opt: float):
+    cost = {}
+    for s in value:
+        if abs(value[s]) < 1e-4:
+            cost[s] = opt + 1
+        else:
+            cost[s] = weight * value[s]
+    return cost

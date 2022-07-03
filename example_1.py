@@ -5,7 +5,7 @@ from dfa.examples import DFA_6, DFA_7
 from solver.lp_solver import LPSolver
 from solver.lp_evaluator import LPEvaluator
 import os
-from utils import plot_heatmap, return_error_on_initial_states
+from utils import plot_value_surf, from_prob_to_cost
 from simulation.simulator import Simulator
 from utils import save_trajectories
 
@@ -63,13 +63,17 @@ evaluator7.evaluate()
 
 value = {s[0]: solver.value[s] for s in product_mdp.states if s[-1] == ("0", "0")}
 
-print(value)
-plot_heatmap(mdp.grid_world_size, value)
+plot_value_surf(mdp.grid_world_size, value)
 
-error = return_error_on_initial_states(evaluator6, evaluator7)
-print(error)
-plot_heatmap(mdp.grid_world_size, error)
+# plot the cost for F(a & F(b & F c))
+value6 = {s[0]: solver6.value[s] for s in product_mdp6.states if s[-1] == "0"}
+cost6 = from_prob_to_cost(value6, 1, wdfa6.opt)
+plot_value_surf(mdp.grid_world_size, cost6)
 
+# plot the cost for F (a & F c) | F (b & F c)
+value7 = {s[0]: solver7.value[s] for s in product_mdp7.states if s[-1] == "0"}
+cost7 = from_prob_to_cost(value7, 1, wdfa7.opt)
+plot_value_surf(mdp.grid_world_size, cost7)
 
 simulator = Simulator(mdp=product_mdp, policy=solver.policy)
 

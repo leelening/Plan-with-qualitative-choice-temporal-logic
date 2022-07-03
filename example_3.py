@@ -4,7 +4,7 @@ from mdp.mdp import MDP
 from dfa.examples import DFA_6, DFA_7, DFA_2, DFA_8
 from solver.lp_solver import LPSolver
 from simulation.simulator import Simulator
-from utils import save_trajectories, plot_heatmap
+from utils import save_trajectories, plot_value_surf
 
 prefix = "example_3"
 
@@ -21,6 +21,8 @@ wdfa8 = get_wdfa_from_dfa(DFA_8, path=prefix, name="F a | F c")
 prod_wdfa = prioritized_conj(
     ordered_or(wdfa6, wdfa7), ordered_or(wdfa2, wdfa8), path=prefix, name="example_3"
 )
+
+print(prod_wdfa)
 
 
 mdp = MDP(
@@ -40,8 +42,7 @@ value = {
     if s[-1] == (("0", "0"), ("0", "0"))
 }
 
-print(value)
-plot_heatmap(mdp.grid_world_size, value)
+plot_value_surf(mdp.grid_world_size, value)
 
 simulator = Simulator(mdp=product_mdp, policy=solver.policy)
 

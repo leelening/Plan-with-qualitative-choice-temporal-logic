@@ -151,17 +151,16 @@ class WDFA(DFA):
                     weight = self.weight[from_state, to_label, to_state]
                 else:
                     weight = 0
-                graph.add_edge(
-                    Edge(
-                        nodes[str(from_state)],
-                        nodes[str(to_state)],
-                        label="{}: [weight: {}, reward: {}]".format(
-                            to_label, weight, self.opt - weight + 1
+                if from_state != to_state:
+                    graph.add_edge(
+                        Edge(
+                            nodes[str(from_state)],
+                            nodes[str(to_state)],
+                            label="{}: {} ".format(to_label, weight)
+                            if weight
+                            else to_label,
                         )
-                        if weight
-                        else to_label,
                     )
-                )
         if path:
             graph.write_png(path)
         return graph
@@ -172,6 +171,7 @@ class WDFA(DFA):
     def __str__(self, fmt="presto"):
         data = [
             ["Q", self.states],
+            ["Size", len(self.states)],
             ["AP", self.input_symbols],
             ["opt", self.opt],
             ["weight", {k: v for k, v in self.weight.items() if v > 0}],
