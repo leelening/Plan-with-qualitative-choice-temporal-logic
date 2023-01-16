@@ -4,7 +4,7 @@ from mdp.mdp import MDP
 from dfa.examples import DFA_6, DFA_7, DFA_2, DFA_8
 from solver.lp_solver import LPSolver
 from simulation.simulator import Simulator
-from utils import save_trajectories, plot_value_surf
+from utils import save_trajectories, plot_heatmap
 
 prefix = "example_4"
 
@@ -24,7 +24,7 @@ prod_wdfa = prioritized_conj(
 
 
 mdp = MDP(
-    file_path="/home/lening/Desktop/qualitative_choice_logic/environment/8 x 8/2.yaml"
+    file_path="environment/8 x 8/2.yaml"
 )
 
 product_mdp = ProductMDP(mdp, prod_wdfa)
@@ -40,7 +40,7 @@ value = {
     if s[-1] == (("0", "0"), ("0", "0"))
 }
 
-plot_value_surf(mdp.grid_world_size, value)
+plot_heatmap(mdp.grid_world_size, value)
 
 simulator = Simulator(mdp=product_mdp, policy=solver.policy)
 

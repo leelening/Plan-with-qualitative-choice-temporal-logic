@@ -7,9 +7,10 @@ from pandas import Series
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib import rcParams
+from mpl_toolkits.mplot3d import axes3d
 
 
-def plot_heatmap(size: list, value: dict):
+def plot_heatmap(size: list, value: dict, path=None):
     res = np.zeros(size)
     for (x, y), v in value.items():
         if isinstance(x, int) and isinstance(y, int):
@@ -20,14 +21,27 @@ def plot_heatmap(size: list, value: dict):
     yticks_pos = np.arange(0.5, size[1] + 0.5, 1)
     yticks_label = range(size[1])
     plt.yticks(yticks_pos, yticks_label[::-1])
+
+    if path:
+        plt.savefig(path)
     plt.show()
 
 
-def plot_value_surf(size: list, value: dict, zlimit=None, title=None):
+def projected_policy(policy: dict, col: int):
+    new_policy = dict()
+    for (state, q), a in policy.items():
+        if q != "sink":
+            new_policy[state, q[col]] = a
+        else:
+            new_policy[state, "sink"] = "aT"
+    return new_policy
+
+
+def plot_value_surf(size: list, value: dict, zlimit=None, title=None, path=None):
     plt.style.use("seaborn-dark")
     fig = plt.figure(figsize=(8, 8))
 
-    ax = fig.gca(projection="3d")
+    ax = fig.add_subplot(111, projection='3d')
     if title:
         fig.canvas.set_window_title(title)
 
@@ -58,6 +72,8 @@ def plot_value_surf(size: list, value: dict, zlimit=None, title=None):
 
     ax.dist = 12
 
+    if path:
+        plt.savefig(path)
     plt.show()
 
 
@@ -65,10 +81,10 @@ def return_error_on_initial_states(evaluator1, evaluator2):
     error = {}
     for k1, k2 in product(evaluator1.value, evaluator2.value):
         if (
-            k1[0] == k2[0]
-            and k1 != "sT"
-            and k1[-1] == evaluator1.mdp._wdfa.initial_state
-            and k2[-1] == evaluator2.mdp._wdfa.initial_state
+                k1[0] == k2[0]
+                and k1 != "sT"
+                and k1[-1] == evaluator1.mdp._wdfa.initial_state
+                and k2[-1] == evaluator2.mdp._wdfa.initial_state
         ):
             error[k1[0]] = evaluator1.value[k1] - evaluator2.value[k2]
     return error

@@ -3,3 +3,6 @@
 .vscode
 */__pycache__
 *.pyc
+*.png
+*.tvs
+*.txt

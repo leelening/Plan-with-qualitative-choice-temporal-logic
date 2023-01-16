@@ -11,13 +11,13 @@ from utils import read_policy
 
 class LPEvaluator(LPSolver):
     def __init__(
-        self,
-        mdp: MDP,
-        policy_path: str,
-        max_gap: float = 1e-4,
-        max_seconds: float = 300,
-        path: str = None,
-        disp: bool = False,
+            self,
+            mdp: MDP,
+            policy_path: str,
+            max_gap: float = 1e-4,
+            max_seconds: float = 300,
+            path: str = None,
+            disp: bool = False,
     ) -> None:
         super(LPEvaluator, self).__init__(
             mdp=mdp, max_gap=max_gap, max_seconds=max_seconds, path=path, disp=disp
@@ -41,15 +41,14 @@ class LPEvaluator(LPSolver):
             xsum(c[i] * self.v[i] for i, _ in enumerate(self.mdp.states))
         )
 
-        for (i, state), action in product(enumerate(self.mdp.states), self.mdp.actions):
-            if action == self.policy[state]:
-                self.m += self.v[i] >= self.mdp.reward[
-                    state, action
-                ] + self.mdp.gamma * xsum(
-                    self.mdp.transitions[state][action][next_state] * self.v[j]
-                    for j, next_state in enumerate(self.mdp.states)
-                    if next_state in self.mdp.transitions[state][action]
-                )
+        for (i, state) in enumerate(self.mdp.states):
+            self.m += self.v[i] >= self.mdp.reward[
+                state, self.policy[state]
+            ] + self.mdp.gamma * xsum(
+                self.mdp.transitions[state][self.policy[state]][next_state] * self.v[j]
+                for j, next_state in enumerate(self.mdp.states)
+                if next_state in self.mdp.transitions[state][self.policy[state]]
+            )
 
         # start solving the minimization problem
         self.m.max_gap = 1e-4
@@ -72,8 +71,8 @@ class LPEvaluator(LPSolver):
                 )
             )
         if (
-            status == OptimizationStatus.OPTIMAL
-            or status == OptimizationStatus.FEASIBLE
+                status == OptimizationStatus.OPTIMAL
+                or status == OptimizationStatus.FEASIBLE
         ):
             print("Extracting the policy...")
             self.extract_policy()
@@ -95,6 +94,6 @@ class LPEvaluator(LPSolver):
                 "{}_evaluation".format(
                     self.mdp._wdfa.name if hasattr(self.mdp._wdfa, "name") else None
                 ),
-            ),
+            ).replace("|", " mid "),
             sep="\t",
         )

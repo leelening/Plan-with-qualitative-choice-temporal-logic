@@ -3,7 +3,7 @@ from collections import defaultdict
 from itertools import product
 import os
 from wdfa.wdfa import WDFA
-
+from copy import  deepcopy
 
 def get_save_path(save_dir: str, name: str) -> str:
     """
@@ -45,18 +45,22 @@ def get_wdfa_from_dfa(dfa: DFA, path: str = None, name: str = None) -> WDFA:
         dfa.final_states,
         name=name,
     )
+    original_transitions = deepcopy(wdfa.transitions)
     wdfa.states.add("sink")
     wdfa.input_symbols.add("end")
-    wdfa.transitions["sink"] = {a: "sink" for a in wdfa.input_symbols}
+    wdfa.transitions["sink"] = {}
 
     for q, a, nq in product(wdfa.states, wdfa.input_symbols, wdfa.states):
         wdfa.assign_weight(q, a, nq, 0)
 
-    for q in wdfa.states:
-        if q != "sink":
-            wdfa.transitions[q]["end"] = "sink"
-        if q in dfa.final_states:
-            wdfa.assign_weight(q, "end", "sink", 1)
+    for q, a in product(wdfa.states, wdfa.input_symbols):
+        if q != "sink" and a != "end":
+            wdfa.transitions[q][a] = original_transitions[q][a]
+        else:
+            wdfa.transitions[q][a] = "sink"
+
+    for q in dfa.final_states:
+        wdfa.assign_weight(q, "end", "sink", 1)
 
     wdfa.set_option(1)
     wdfa.validate()
