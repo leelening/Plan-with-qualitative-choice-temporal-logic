@@ -35,4 +35,4 @@ AP: ["a", "b", "c", "E", "o"]
 randomness: 0.1
 stuck_prob: 1
 
-gamma: 0.99
+gamma: 1
