@@ -9,6 +9,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib import rcParams
 from mpl_toolkits.mplot3d import axes3d
 
+rcParams.update({"font.size": 20})
 
 def plot_heatmap(size: list, value: dict, path=None):
     res = np.zeros(size)
@@ -17,6 +18,7 @@ def plot_heatmap(size: list, value: dict, path=None):
             res[x][y] = v
 
     res = np.rot90(res)
+    sns.set_style({'font.family': 'Times New Roman'})
     ax = sns.heatmap(res)
     yticks_pos = np.arange(0.5, size[1] + 0.5, 1)
     yticks_label = range(size[1])

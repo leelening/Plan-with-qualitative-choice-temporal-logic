@@ -29,7 +29,7 @@ solver.solve()
 value = {s[0]: solver.value[s] for s in product_mdp.states if s[-1] == ("0", "0")}
 print(f"The value of the initial state (6, 6) for the F b OR (F a | F c): {value[6, 6]}")
 
-plot_value_surf(mdp.grid_world_size, value, path=os.path.join(prefix, "value surf.png"))
+# plot_value_surf(mdp.grid_world_size, value, path=os.path.join(prefix, "value surf.png"))
 plot_heatmap(mdp.grid_world_size, value, path=os.path.join(prefix, "heatmap.png"))
 
 # solve F b
@@ -40,7 +40,7 @@ solver2.solve()
 value2 = {s[0]: solver2.value[s] for s in product_mdp2.states if s[-1] == "0"}
 print(f"The value of the initial state (6, 6) for the F b: {value2[6, 6]}")
 print(f"The value of the initial state (3, 0) for the F b: {value2[3, 0]}")
-plot_value_surf(mdp.grid_world_size, value2, path=os.path.join(prefix, "2", "value surf.png"))
+# plot_value_surf(mdp.grid_world_size, value2, path=os.path.join(prefix, "2", "value surf.png"))
 plot_heatmap(mdp.grid_world_size, value2, path=os.path.join(prefix, "2", "heatmap.png"))
 
 # solve F a | F c
@@ -51,15 +51,5 @@ solver8.solve()
 value8 = {s[0]: solver8.value[s] for s in product_mdp8.states if s[-1] == "0"}
 print(f"The value of the initial state (6, 6) for the F a | F c: {value8[6, 6]}")
 print(f"The value of the initial state (3, 0) for the F a | F c: {value8[3, 0]}")
-plot_value_surf(mdp.grid_world_size, value8, path=os.path.join(prefix, "8", "value surf.png"))
+# plot_value_surf(mdp.grid_world_size, value8, path=os.path.join(prefix, "8", "value surf.png"))
 plot_heatmap(mdp.grid_world_size, value8, path=os.path.join(prefix, "8", "heatmap.png"))
-
-# value28 = {s: max(2 * value2[s], 1 * value8[s]) for s in value8}
-# plot_value_surf(mdp.grid_world_size, value28)
-# plot_heatmap(mdp.grid_world_size, value28)
-
-simulator = Simulator(mdp=product_mdp, policy=solver.policy)
-
-sampled_trajectories = simulator.sample_trajectories(10)
-
-save_trajectories(sampled_trajectories=sampled_trajectories, prefix=prefix)

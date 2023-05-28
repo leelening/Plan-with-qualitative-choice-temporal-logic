@@ -3,8 +3,8 @@ from product_mdp.product_mdp import ProductMDP
 from mdp.mdp import MDP
 from dfa.examples import DFA_6, DFA_7, DFA_2, DFA_8
 from solver.lp_solver import LPSolver
-from simulation.simulator import Simulator
-from utils import save_trajectories, plot_heatmap
+from utils import plot_value_surf, plot_heatmap
+import os
 
 prefix = "example_3"
 
@@ -42,10 +42,7 @@ value = {
     if s[-1] == (("0", "0"), ("0", "0"))
 }
 
+plot_value_surf(mdp.grid_world_size, value, path=os.path.join(prefix, "value surf.png"))
+
 plot_heatmap(mdp.grid_world_size, value)
 
-simulator = Simulator(mdp=product_mdp, policy=solver.policy)
-
-sampled_trajectories = simulator.sample_trajectories(10)
-
-save_trajectories(sampled_trajectories=sampled_trajectories, prefix=prefix)

@@ -42,11 +42,11 @@ value8 = {s[0]: evaluator8.value[s] for s in product_mdp8.states if s[-1] == "0"
 evaluator12.evaluate()
 value12 = {s[0]: evaluator12.value[s] for s in product_mdp12.states if s[-1] == ("0", "0")}
 
-plot_value_surf(mdp.grid_world_size, value2, path=os.path.join(prefix, "2", "value surf.png"))
+# plot_value_surf(mdp.grid_world_size, value2, path=os.path.join(prefix, "2", "value surf.png"))
 plot_heatmap(mdp.grid_world_size, value2, path=os.path.join(prefix, "2", "heatmap.png"))
 
-plot_value_surf(mdp.grid_world_size, value8, path=os.path.join(prefix, "8", "value surf.png"))
+# plot_value_surf(mdp.grid_world_size, value8, path=os.path.join(prefix, "8", "value surf.png"))
 plot_heatmap(mdp.grid_world_size, value8, path=os.path.join(prefix, "8", "heatmap.png"))
 
-plot_value_surf(mdp.grid_world_size, value12, path=os.path.join(prefix, "12", "value surf.png"))
+# plot_value_surf(mdp.grid_world_size, value12, path=os.path.join(prefix, "12", "value surf.png"))
 plot_heatmap(mdp.grid_world_size, value12, path=os.path.join(prefix, "12", "heatmap.png"))

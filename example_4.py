@@ -42,8 +42,3 @@ value = {
 
 plot_heatmap(mdp.grid_world_size, value)
 
-simulator = Simulator(mdp=product_mdp, policy=solver.policy)
-
-sampled_trajectories = simulator.sample_trajectories(10)
-
-save_trajectories(sampled_trajectories=sampled_trajectories, prefix=prefix)

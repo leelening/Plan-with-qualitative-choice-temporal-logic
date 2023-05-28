@@ -161,8 +161,8 @@ class WDFA(DFA):
                             else to_label,
                         )
                     )
-        if path:
-            graph.write_png(path.replace("|", " mid "))
+        # if path:
+            # graph.write_png(path.replace("|", " mid "))
         return graph
 
     def set_option(self, opt=1):
